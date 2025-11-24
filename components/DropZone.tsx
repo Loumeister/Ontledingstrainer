@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Token, RoleDefinition } from '../types';
+import { Token, RoleDefinition, ValidationState } from '../types';
 
 interface SentenceChunkProps {
   chunkIndex: number;
@@ -13,7 +13,8 @@ interface SentenceChunkProps {
   onRemoveRole: (chunkId: string) => void;
   onRemoveSubRole: (tokenId: string) => void;
   onToggleSplit: (globalTokenIndex: number) => void;
-  validationState?: 'correct' | 'incorrect-role' | 'incorrect-split' | null;
+  validationState?: ValidationState;
+  feedbackMessage?: string | null;
 }
 
 export const SentenceChunk: React.FC<SentenceChunkProps> = ({
@@ -26,7 +27,8 @@ export const SentenceChunk: React.FC<SentenceChunkProps> = ({
   onRemoveRole,
   onRemoveSubRole,
   onToggleSplit,
-  validationState
+  validationState,
+  feedbackMessage
 }) => {
   const [isOverChunk, setIsOverChunk] = useState(false);
   const [hoveredWordId, setHoveredWordId] = useState<string | null>(null);
@@ -43,24 +45,29 @@ export const SentenceChunk: React.FC<SentenceChunkProps> = ({
     borderColor = "border-green-500";
     bgColor = "bg-green-50";
     statusIcon = <span className="absolute -top-3 -right-3 bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-sm z-20">✓</span>;
-  } else if (validationState === 'incorrect-role') {
+  } else if (validationState === 'warning') {
+    // Warning state (e.g. WG on PV)
     borderColor = "border-orange-400";
     bgColor = "bg-orange-50";
-    statusIcon = <span className="absolute -top-3 -right-3 bg-orange-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-sm z-20">?</span>;
+    statusIcon = <span className="absolute -top-3 -right-3 bg-orange-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-sm z-20">!</span>;
+  } else if (validationState === 'incorrect-role') {
+    borderColor = "border-red-400";
+    bgColor = "bg-red-50";
+    statusIcon = <span className="absolute -top-3 -right-3 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-sm z-20">×</span>;
   } else if (validationState === 'incorrect-split') {
     borderColor = "border-red-500";
     bgColor = "bg-red-50";
-    statusIcon = <span className="absolute -top-3 -right-3 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-sm z-20">×</span>;
+    statusIcon = <span className="absolute -top-3 -right-3 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs shadow-sm z-20">✂</span>;
   } else if (assignedRole) {
     borderColor = assignedRole.borderColorClass;
-    bgColor = "bg-white"; // Keep white background to make sub-roles pop
+    bgColor = "bg-white";
   }
 
   const chunkId = tokens[0].id;
 
   const handleDragOverChunk = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    if (hoveredWordId) return; // Don't highlight chunk if hovering a word
+    if (hoveredWordId) return;
     setIsOverChunk(true);
   };
 
@@ -86,12 +93,20 @@ export const SentenceChunk: React.FC<SentenceChunkProps> = ({
       `}
       onDragOver={handleDragOverChunk}
       onDrop={(e) => {
-        if (hoveredWordId) return; // Let the word handler take it
+        if (hoveredWordId) return;
         setIsOverChunk(false);
         onDropChunk(e, chunkId);
       }}
       onDragLeave={handleDragLeaveChunk}
     >
+      {/* Tooltip for Feedback */}
+      {feedbackMessage && (
+        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-slate-800 text-white text-xs rounded shadow-lg z-50 text-center pointer-events-none animate-in fade-in slide-in-from-bottom-1">
+          {feedbackMessage}
+          <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
+        </div>
+      )}
+
       {/* Main Role Header */}
       <div className={`
         h-9 border-b border-dashed border-slate-200 flex items-center justify-center text-xs rounded-t-lg

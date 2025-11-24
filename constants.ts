@@ -19,6 +19,46 @@ export const ROLES: RoleDefinition[] = [
   { key: 'bijv_bep', label: 'Bijvoeglijke Bepaling', shortLabel: 'BB', colorClass: 'bg-teal-50 text-teal-700', borderColorClass: 'border-teal-200', isSubOnly: true },
 ];
 
+// Define specific feedback messages for common mistakes
+export const FEEDBACK_RULES: Record<string, Record<string, string>> = {
+  // Format: [ActualRole_Placed]: { [ExpectedRole]: "Message" }
+  'wg': {
+    'pv': "Dit is inderdaad deel van het WG, maar benoem dit specifieke deel als de Persoonsvorm (PV).",
+    'ng': "Let op: in deze zin staat een koppelwerkwoord. Dan heet de rest Naamwoordelijk Gezegde."
+  },
+  'pv': {
+    'wg': "Dit hoort bij het gezegde, maar is niet de persoonsvorm (het vervoegde werkwoord)."
+  },
+  'lv': {
+    'ond': "Voert dit zinsdeel de actie uit? Of ondergaat het de actie? (Check: Wie/wat + gezegde?)",
+    'vv': "Dit begint met een vast voorzetsel. Dan is het meestal geen Lijdend Voorwerp.",
+    'bwb': "Zegt dit 'wat' er gedaan wordt? Of 'waar/wanneer/hoe'?"
+  },
+  'ond': {
+    'lv': "Is dit wie de actie ondergaat? Het onderwerp is wie de actie 'doet' of 'is'.",
+    'mw': "Aan wie of voor wie wordt iets gedaan? Dat is niet het onderwerp."
+  },
+  'bwb': {
+    'vv': "Dit begint met een voorzetsel, maar hoort het *vast* bij het werkwoord? Of is het tijd/plaats?",
+    'lv': "Dit geeft extra informatie (tijd, plaats, reden), het is niet het lijdend voorwerp."
+  },
+  'vv': {
+    'bwb': "Dit hoort vast bij het werkwoord (bijv. wachten 'op'). Het is geen bepaling van tijd/plaats."
+  },
+  'ng': {
+    'wg': "Is er een koppelwerkwoord (zijn, worden, blijven...)? Zo niet, dan is het een Werkwoordelijk Gezegde."
+  }
+};
+
+export const HINTS = {
+  MISSING_PV: "Tip: Zoek eerst de persoonsvorm. Maak de zin vragend of verander de tijd.",
+  MISSING_OW: "Tip: Zoek het onderwerp. Vraag: Wie of wat + persoonsvorm?",
+  MISSING_WG: "Tip: Maak het gezegde compleet. Welke andere werkwoorden staan er in de zin?",
+  MISSING_NG: "Tip: Dit is een zin met een koppelwerkwoord. Zoek het Naamwoordelijk Gezegde (wat wordt er gezegd over het onderwerp?).",
+  MISSING_LV: "Tip: Is er een Lijdend Voorwerp? Vraag: Wie of wat + gezegde + onderwerp?",
+  generic: (roleLabel: string) => `Tip: Probeer het zinsdeel '${roleLabel}' te vinden.`
+};
+
 export const SENTENCES: Sentence[] = [
   {
     id: 1,
@@ -132,7 +172,7 @@ export const SENTENCES: Sentence[] = [
       { id: "s7t1", text: "Eet", role: "pv" },
       { id: "s7t2", text: "jij", role: "ow" },
       { id: "s7t3", text: "eigenlijk", role: "bwb" },
-      { id: "s7t4", text: "wel", role: "lv" },
+      { id: "s7t4", text: "wel", role: "bwb", newChunk: true },
       { id: "s7t5", text: "genoeg", role: "lv" },
       { id: "s7t6", text: "groente?", role: "lv" }
     ]
@@ -242,6 +282,20 @@ export const SENTENCES: Sentence[] = [
       { id: "s15t5", text: "een", role: "lv" },
       { id: "s15t6", text: "kans", role: "lv" },
       { id: "s15t7", text: "gegeven?", role: "wg" }
+    ]
+  },
+  {
+    id: 16,
+    label: "Zin 16: Spekglad",
+    predicateType: 'NG',
+    level: 2,
+    tokens: [
+      { id: "s16t1", text: "De", role: "ow" },
+      { id: "s16t2", text: "regen", role: "ow" },
+      { id: "s16t3", text: "maakt", role: "pv" },
+      { id: "s16t4", text: "de", role: "lv" },
+      { id: "s16t5", text: "straat", role: "lv" },
+      { id: "s16t6", text: "spekglad.", role: "nwd" }
     ]
   },
   {
@@ -924,7 +978,7 @@ export const SENTENCES: Sentence[] = [
       { id: "s56t2", text: "mensen", role: "ow" },
       { id: "s56t3", text: "hebben", role: "pv" },
       { id: "s56t4", text: "nog", role: "bwb" },
-      { id: "s56t5", text: "nooit", role: "bwb" },
+      { id: "s56t5", text: "nooit", role: "bwb", newChunk: true },
       { id: "s56t6", text: "vrijwilligerswerk", role: "lv" },
       { id: "s56t7", text: "gedaan.", role: "wg" }
     ]
@@ -994,7 +1048,7 @@ export const SENTENCES: Sentence[] = [
       { id: "s60t3", text: "snor", role: "bwb" },
       { id: "s60t4", text: "lijkt", role: "pv" },
       { id: "s60t5", text: "hij", role: "ow" },
-      { id: "s60t6", text: "heel", role: "bwb" },
+      { id: "s60t6", text: "heel", role: "bwb", newChunk: true },
       { id: "s60t7", text: "erg", role: "bwb" },
       { id: "s60t8", text: "op", role: "vv" },
       { id: "s60t9", text: "zo’n", role: "vv", subRole: "bijv_bep" },
@@ -1245,8 +1299,8 @@ export const SENTENCES: Sentence[] = [
       { id: "s74t10", text: "pandemiejaren", role: "bwb" },
       { id: "s74t11", text: "aanzienlijk", role: "nwd", subRole: "bijv_bep" },
       { id: "s74t12", text: "slechter", role: "nwd" },
-      { id: "s74t13", text: "dan", role: "bwb" },
-      { id: "s74t14", text: "verwacht.", role: "bwb" }
+      { id: "s74t13", text: "dan", role: "nwd" },
+      { id: "s74t14", text: "verwacht.", role: "nwd" }
     ]
   },
   {
@@ -1279,16 +1333,16 @@ export const SENTENCES: Sentence[] = [
       { id: "s76t1", text: "De", role: "ow" },
       { id: "s76t2", text: "onderzoekers", role: "ow" },
       { id: "s76t3", text: "noemen", role: "pv" },
-      { id: "s76t4", text: "deze", role: "lv", subRole: "bijv_bep" }, // User called it LV, technically Obj1
+      { id: "s76t4", text: "deze", role: "lv", subRole: "bijv_bep" },
       { id: "s76t5", text: "onverwachte", role: "lv", subRole: "bijv_bep" },
       { id: "s76t6", text: "uitkomst", role: "lv" },
       { id: "s76t7", text: "in", role: "bwb" },
       { id: "s76t8", text: "hun", role: "bwb", subRole: "bijv_bep" },
       { id: "s76t9", text: "publicatie", role: "bwb" },
-      { id: "s76t10", text: "een", role: "bwb", newChunk: true }, // Treating as BWB/Predicative Adjunct to fit user schema of LV/MV
+      { id: "s76t10", text: "een", role: "bwb" },
       { id: "s76t11", text: "belangrijke", role: "bwb", subRole: "bijv_bep" },
       { id: "s76t12", text: "kanteling", role: "bwb" },
-      { id: "s76t13", text: "in", role: "bwb", newChunk: true },
+      { id: "s76t13", text: "in", role: "bwb" },
       { id: "s76t14", text: "het", role: "bwb" },
       { id: "s76t15", text: "debat.", role: "bwb" }
     ]
@@ -1444,7 +1498,7 @@ export const SENTENCES: Sentence[] = [
       { id: "s84t2", text: "opa", role: "ow" },
       { id: "s84t3", text: "is", role: "pv" },
       { id: "s84t4", text: "nog", role: "bwb" },
-      { id: "s84t5", text: "steeds", role: "bwb", newChunk: true },
+      { id: "s84t5", text: "steeds", role: "bwb", newChunk: false },
       { id: "s84t6", text: "erg", role: "nwd", subRole: "bijv_bep" },
       { id: "s84t7", text: "fit.", role: "nwd" }
     ]

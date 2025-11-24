@@ -32,3 +32,6 @@ export interface RoleDefinition {
 }
 
 export type PlacementMap = Record<string, RoleKey>; // key is the id of the first token in the chunk OR the specific token id
+
+// Update validation state to include 'warning'
+export type ValidationState = 'correct' | 'incorrect-role' | 'incorrect-split' | 'warning' | null;

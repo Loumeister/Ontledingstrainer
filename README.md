@@ -29,56 +29,69 @@ De applicatie geeft directe feedback na het controleren:
 *   Zijn eventuele sub-rollen (zoals bijvoeglijke bepalingen) correct geplaatst?
 *   De knop "Toon antwoord" laat de volledige uitwerking zien (dit levert 0 punten op in een sessie).
 
+## Installatie & Gebruik Lokaal
+
+1.  Installeer dependencies:
+    ```bash
+    npm install
+    ```
+2.  Start de development server:
+    ```bash
+    npm run dev
+    ```
+3.  Open de lokale link (meestal `http://localhost:5173`).
+
+## Deployment op GitHub Pages
+
+Deze app gebruikt **Vite** en **TypeScript**. Webbrowsers kunnen dit niet direct lezen. Je moet de app eerst **bouwen** en dan de `dist` map publiceren.
+
+**Methode 1: Automatisch (Aanbevolen)**
+1.  Zorg dat je git repo gekoppeld is.
+2.  Draai het commando:
+    ```bash
+    npm run deploy
+    ```
+3.  Dit bouwt de app en pusht de `dist` folder naar een `gh-pages` branch.
+4.  Ga in GitHub naar **Settings > Pages** en zet 'Source' op de `gh-pages` branch.
+
+**Methode 2: Handmatig**
+1.  Bouw de app:
+    ```bash
+    npm run build
+    ```
+2.  Er verschijnt een `dist` map.
+3.  Upload **alleen de inhoud van de `dist` map** naar je webhosting of GitHub Pages root.
+
 ## Bestandsstructuur
 
-*   **`index.html`**: De basis HTML-pagina die de applicatie laadt.
-*   **`App.tsx`**: De hoofdcomponent. Hierin zit de logica voor navigatie, state management (sessies, scores) en validatie van de antwoorden.
-*   **`constants.ts`**: De database. Dit bestand bevat alle oefenzinnen (`SENTENCES`) en de definities van de grammaticale rollen (`ROLES`).
-*   **`types.ts`**: De TypeScript definities voor datastructuren zoals `Sentence`, `Token`, en `RoleKey`.
-*   **`components/`**:
-    *   `DropZone.tsx` (SentenceChunk): Het visuele blokje van een zinsdeel. Handelt de logica voor splitsen en het ontvangen van gesleepte labels af.
-    *   `WordChip.tsx` (DraggableRole): De sleepbare knoppen met de namen van de zinsdelen.
+*   **`index.html`**: De entrypoint voor Vite (verwijst naar `index.tsx`).
+*   **`App.tsx`**: De hoofdcomponent met navigatie, state en logica.
+*   **`constants.ts`**: De database met zinnen (`SENTENCES`) en rollen (`ROLES`).
+*   **`types.ts`**: TypeScript definities.
+*   **`components/`**: UI componenten (`DropZone`, `WordChip`).
 
-## Zinnen Toevoegen & Beheren
+## Toekomstvisie: Samengestelde Zinnen
 
-Alle data staat in `constants.ts`. Om een nieuwe zin toe te voegen, voeg je een object toe aan de `SENTENCES` array.
+Om in de toekomst samengestelde zinnen (hoofd- en bijzinnen) te ondersteunen, moet de datastructuur worden aangepast.
 
-### Datastructuur van een zin
+**Architectuurplan:**
+De structuur evolueert van `Sentence -> Tokens[]` naar `Sentence -> Clause[] -> Tokens[]`.
 
+**Voorgestelde Interfaces:**
 ```typescript
-{
-  id: 129,                    // Uniek nummer
-  label: "Titel van de zin",  // Zichtbaar in selectielijst
-  predicateType: 'WG',        // 'WG' (Werkwoordelijk) of 'NG' (Naamwoordelijk)
-  level: 2,                   // 1 (Basis), 2 (Middel), 3 (Hoog)
-  tokens: [
-    // Elk woord is een apart object
-    { id: "s129t1", text: "De", role: "ow" }, 
-    { id: "s129t2", text: "man", role: "ow" },
-    { id: "s129t3", text: "loopt", role: "pv" },
-    { id: "s129t4", text: "op", role: "bwb" },
-    { id: "s129t5", text: "straat", role: "bwb" }, 
-    // ...
-  ]
+interface Clause {
+  id: string;
+  type: 'hoofdzin' | 'bijzin';
+  tokens: Token[];
+  // Elke clause wordt onafhankelijk ontleed (PV, OW, etc.) binnen zijn eigen context.
+}
+
+interface ComplexSentence extends Sentence {
+  clauses: Clause[];
+  conjunctions: Token[]; // Voegwoorden die clauses verbinden
 }
 ```
 
-### Belangrijke aandachtspunten
-
-1.  **`role`**: De grammaticale rol van het **zinsdeel** waar het woord in zit (bv. `pv`, `ow`, `lv`, `bwb`).
-2.  **`subRole`**: (Optioneel) De rol van het **woord zelf**, bijvoorbeeld `bijv_bep` (bijvoeglijke bepaling).
-3.  **`newChunk`**: (Belangrijk!) Als twee zinsdelen met **dezelfde rol** direct achter elkaar staan (bijvoorbeeld twee keer een `bwb`), plak de applicatie ze standaard aan elkaar. Om aan te geven dat het tweede deel los moet staan, geef je het eerste woord van dat tweede deel de eigenschap `newChunk: true`.
-
-    *Voorbeeld:* "... [gisteren] [hard] ..." (beide BWB).
-    ```typescript
-    { id: "...", text: "gisteren", role: "bwb" },
-    { id: "...", text: "hard", role: "bwb", newChunk: true }, // start nieuwe BWB
-    ```
-
-## Technologie
-
-De applicatie is gebouwd met:
-*   **React**: Voor de gebruikersinterface en logica.
-*   **TypeScript**: Voor type-veiligheid en structuur.
-*   **Tailwind CSS**: Voor de styling.
-
+**UI Wijzigingen:**
+1.  **Stap 0 (Nieuw)**: Zin splitsen in deelzinnen (Clauses). Sleep een scheidingslijn tussen clauses.
+2.  **Stap 1 & 2**: De huidige stappen (verdelen en benoemen) uitvoeren per clause (bijv. via tabbladen of onder elkaar).
