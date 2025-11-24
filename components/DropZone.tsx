@@ -87,7 +87,7 @@ export const SentenceChunk: React.FC<SentenceChunkProps> = ({
   return (
     <div 
       className={`
-        relative flex flex-col min-w-[140px] rounded-xl border-2 transition-all duration-300 group/chunk
+        relative flex flex-col min-w-[140px] rounded-xl border-2 transition-colors duration-200 group/chunk
         ${borderColor} ${bgColor}
         ${validationState === 'incorrect-split' ? 'opacity-80' : ''}
       `}
@@ -109,16 +109,16 @@ export const SentenceChunk: React.FC<SentenceChunkProps> = ({
 
       {/* Main Role Header */}
       <div className={`
-        h-9 border-b border-dashed border-slate-200 flex items-center justify-center text-xs rounded-t-lg
+        h-9 border-b border-dashed border-slate-200 flex items-center justify-center text-xs rounded-t-lg relative z-10
         ${assignedRole ? assignedRole.colorClass + ' font-bold' : 'text-slate-400 italic'}
       `}>
         {assignedRole ? (
           <div className="flex items-center gap-2 w-full justify-center px-2 relative group/header">
-            <span>{assignedRole.label}</span>
+            <span className="relative z-10">{assignedRole.label}</span>
             {!validationState && (
               <button 
                 onClick={(e) => { e.stopPropagation(); onRemoveRole(chunkId); }}
-                className="hidden group-hover/header:flex absolute right-0 hover:bg-black/10 rounded-full w-5 h-5 items-center justify-center transition-colors"
+                className="hidden group-hover/header:flex absolute right-0 hover:bg-black/10 rounded-full w-5 h-5 items-center justify-center transition-colors z-20"
                 title="Verwijder benaming"
               >
                 ×
@@ -157,8 +157,8 @@ export const SentenceChunk: React.FC<SentenceChunkProps> = ({
                   {/* The Word Target */}
                   <span 
                     className={`
-                      text-slate-800 font-medium text-lg leading-tight px-1 py-1 rounded transition-all duration-200 border border-transparent
-                      ${isWordHovered ? 'bg-yellow-100 border-yellow-300 scale-105 shadow-sm' : ''}
+                      text-slate-800 font-medium text-lg leading-tight px-1 py-1 rounded transition-colors duration-200 border border-transparent
+                      ${isWordHovered ? 'bg-yellow-100 border-yellow-300 shadow-sm' : ''}
                       ${!isWordHovered && !subRole ? 'hover:bg-slate-100' : ''}
                     `}
                     onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}

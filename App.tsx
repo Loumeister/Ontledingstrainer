@@ -19,6 +19,10 @@ export default function App() {
   
   // Configuration State
   const [predicateMode, setPredicateMode] = useState<PredicateMode>('ALL');
+  
+  // Sentence Part Filters
+  const [includeLV, setIncludeLV] = useState(true); // Default true as it is a core constituent
+  const [includeMV, setIncludeMV] = useState(false);
   const [includeBijst, setIncludeBijst] = useState(false);
   const [includeBB, setIncludeBB] = useState(false);
   const [includeVV, setIncludeVV] = useState(false);
@@ -62,8 +66,13 @@ export default function App() {
     return SENTENCES.filter(s => {
       if (predicateMode === 'WG' && s.predicateType !== 'WG') return false;
       if (predicateMode === 'NG' && s.predicateType !== 'NG') return false;
+      
+      // Filter based on included parts
+      if (!includeLV && s.tokens.some(t => t.role === 'lv')) return false;
+      if (!includeMV && s.tokens.some(t => t.role === 'mv')) return false;
       if (!includeBijst && s.tokens.some(t => t.role === 'bijst')) return false;
       if (!includeVV && s.tokens.some(t => t.role === 'vv')) return false;
+      
       if (selectedLevel !== null && s.level !== selectedLevel) return false;
       return true;
     });
@@ -295,7 +304,14 @@ export default function App() {
 
       if (!isValidSplit) {
         chunkStatus[idx] = 'incorrect-split';
-        chunkFeedback[idx] = "De woorden in dit blokje horen niet (allemaal) bij elkaar.";
+        // Specific splitting feedback
+        if (!isConsistentRole || missedInternalSplit) {
+            chunkFeedback[idx] = "De woorden in dit blokje horen niet (allemaal) bij elkaar.";
+        } else if (splitTooEarly || startedTooLate) {
+            chunkFeedback[idx] = "Dit zinsdeel is nog niet compleet (er hoort nog iets bij).";
+        } else {
+            chunkFeedback[idx] = "De verdeling klopt niet.";
+        }
       } else {
         // 2. Main Role Logic
         const userLabel = chunkLabels[firstTokenId];
@@ -491,6 +507,22 @@ export default function App() {
                         
                         <label className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
                             <div>
+                                <span className="font-bold text-slate-700 block text-sm">Lijdend Voorwerp</span>
+                                <span className="text-xs text-slate-400">Zinnen met LV tonen.</span>
+                            </div>
+                            <input type="checkbox" className="w-5 h-5 text-blue-600 rounded" checked={includeLV} onChange={(e) => setIncludeLV(e.target.checked)} />
+                        </label>
+
+                        <label className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                            <div>
+                                <span className="font-bold text-slate-700 block text-sm">Meewerkend Voorwerp</span>
+                                <span className="text-xs text-slate-400">Zinnen met MV tonen.</span>
+                            </div>
+                            <input type="checkbox" className="w-5 h-5 text-blue-600 rounded" checked={includeMV} onChange={(e) => setIncludeMV(e.target.checked)} />
+                        </label>
+
+                        <label className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                            <div>
                                 <span className="font-bold text-slate-700 block text-sm">Bijstelling</span>
                                 <span className="text-xs text-slate-400">Zinnen met bijstellingen tonen.</span>
                             </div>
@@ -660,7 +692,7 @@ export default function App() {
             {step === 'label' && (
               <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
                  {!showAnswerMode && (
-                   <div className="bg-white p-3 md:p-4 -mx-4 md:mx-0 px-4 md:px-4 rounded-b-xl md:rounded-xl shadow-md border-y md:border border-slate-200 sticky top-0 md:top-4 z-50 transition-all">
+                   <div className="bg-white p-3 md:p-4 -mx-4 md:mx-0 px-4 md:px-4 rounded-b-xl md:rounded-xl shadow-md border-y md:border border-slate-200 sticky top-0 z-[100] transition-all">
                       <div className="flex flex-col gap-2 md:gap-4">
                         <div>
                            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Zinsdelen & Gezegde:</p>

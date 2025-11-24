@@ -71,7 +71,7 @@ export const SENTENCES: Sentence[] = [
       { id: "s1t3", text: "buurvrouw", role: "ow" },
       { id: "s1t4", text: "leest", role: "pv" },
       { id: "s1t5", text: "’s ochtends", role: "bwb" },
-      { id: "s1t6", text: "rustig", role: "bwb" },
+      { id: "s1t6", text: "rustig", role: "bwb", newChunk: true },
       { id: "s1t7", text: "de", role: "lv" },
       { id: "s1t8", text: "krant", role: "lv" },
       { id: "s1t9", text: "in", role: "bwb" },
