@@ -370,6 +370,20 @@ export default function App() {
       }
     });
 
+    // If in session and viewing answer without checking, count as 0 score for this sentence to ensure total increases
+    if (mode === 'session' && !validationResult) {
+        let realChunkCount = 0;
+        currentSentence.tokens.forEach((t, i) => {
+            if (i === 0 || t.role !== currentSentence.tokens[i-1].role || t.newChunk) {
+                realChunkCount++;
+            }
+        });
+        setSessionStats(prev => ({
+            correct: prev.correct,
+            total: prev.total + realChunkCount
+        }));
+    }
+
     setChunkLabels(correctChunkLabels);
     setSubLabels(correctSubLabels);
     setShowAnswerMode(true);
@@ -390,7 +404,7 @@ export default function App() {
   if (!currentSentence && !isSessionFinished) {
       return (
         <div className="min-h-screen bg-slate-50 p-4 md:p-8 font-sans flex items-center justify-center">
-            <main className="max-w-3xl w-full bg-white p-8 rounded-2xl shadow-lg space-y-8 border border-slate-200">
+            <main className="max-w-6xl w-full bg-white p-8 rounded-2xl shadow-lg space-y-8 border border-slate-200">
                 <div className="text-center border-b pb-6">
                     <h1 className="text-4xl font-extrabold text-slate-800 tracking-tight mb-2">
                         <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
@@ -400,10 +414,10 @@ export default function App() {
                     <p className="text-slate-500 text-lg">Stel je training samen:</p>
                 </div>
 
-                {/* Configuration Panel */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Configuration Panel - 3 Columns */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     
-                    {/* Column 1: Predicate & Level */}
+                    {/* Column 1: Filters */}
                     <div className="space-y-6">
                         {/* Level Filter */}
                         <div>
@@ -445,7 +459,7 @@ export default function App() {
                         </div>
                     </div>
 
-                    {/* Column 2: Extra Elements */}
+                    {/* Column 2: Settings */}
                     <div className="space-y-3">
                         <h3 className="font-bold text-slate-700">Onderdelen</h3>
                         
@@ -488,53 +502,52 @@ export default function App() {
                             />
                         </label>
                     </div>
-                </div>
 
-                <div className="border-t border-slate-100 my-6"></div>
-
-                <div className="grid gap-6 md:grid-cols-5">
-                    
-                    {/* Start Session Block */}
-                    <div className="md:col-span-3 bg-blue-50 p-6 rounded-xl border border-blue-100 text-center flex flex-col justify-center">
-                        <h3 className="font-bold text-blue-800 text-xl mb-4">Start Oefensessie</h3>
-                        <div className="text-sm text-blue-600 mb-6 font-medium">
-                           {availableSentences.length} zinnen beschikbaar
-                        </div>
+                    {/* Column 3: Actions */}
+                    <div className="flex flex-col gap-6">
                         
-                        <div className="flex items-end justify-center gap-4">
-                            <div className="flex flex-col items-start gap-1">
-                                <label className="text-xs font-bold text-blue-800 uppercase">Aantal zinnen</label>
-                                <input 
-                                  type="number" 
-                                  min="1" 
-                                  max={availableSentences.length}
-                                  value={customSessionCount}
-                                  onChange={(e) => setCustomSessionCount(Math.max(1, Math.min(availableSentences.length, parseInt(e.target.value) || 1)))}
-                                  className="w-24 px-3 py-2 text-lg font-bold text-center border-2 border-blue-200 rounded-lg focus:border-blue-500 outline-none text-blue-900"
-                                />
+                        {/* Start Session Block */}
+                        <div className="bg-blue-50 p-6 rounded-xl border border-blue-100 text-center flex flex-col justify-center flex-1">
+                            <h3 className="font-bold text-blue-800 text-xl mb-2">Start Oefensessie</h3>
+                            <div className="text-sm text-blue-600 mb-4 font-medium">
+                               {availableSentences.length} zinnen beschikbaar
                             </div>
-                            <button 
-                                onClick={startSession} 
-                                className="h-[46px] px-8 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 hover:shadow-lg hover:-translate-y-0.5 transition-all"
-                            >
-                                Start
-                            </button>
+                            
+                            <div className="flex flex-col items-center gap-3">
+                                <div className="flex flex-col items-center gap-1">
+                                    <label className="text-xs font-bold text-blue-800 uppercase">Aantal zinnen</label>
+                                    <input 
+                                      type="number" 
+                                      min="1" 
+                                      max={availableSentences.length}
+                                      value={customSessionCount}
+                                      onChange={(e) => setCustomSessionCount(Math.max(1, Math.min(availableSentences.length, parseInt(e.target.value) || 1)))}
+                                      className="w-full px-3 py-2 text-lg font-bold text-center border-2 border-blue-200 rounded-lg focus:border-blue-500 outline-none text-blue-900"
+                                    />
+                                </div>
+                                <button 
+                                    onClick={startSession} 
+                                    className="w-full h-[46px] px-8 bg-blue-600 text-white font-bold rounded-lg shadow-md hover:bg-blue-700 hover:shadow-lg hover:-translate-y-0.5 transition-all"
+                                >
+                                    Start
+                                </button>
+                            </div>
                         </div>
-                    </div>
 
-                    {/* Manual Select Block */}
-                    <div className="md:col-span-2 bg-white p-6 rounded-xl border border-slate-200 flex flex-col justify-center">
-                        <h3 className="font-bold text-slate-700 mb-4 text-center">Kies één zin</h3>
-                        <select
-                            className="w-full px-4 py-2 rounded-lg border border-slate-300 bg-white focus:ring-2 focus:ring-blue-500 outline-none text-slate-700"
-                            onChange={(e) => handleSentenceSelect(Number(e.target.value))}
-                            defaultValue=""
-                        >
-                            <option value="" disabled>-- Selecteer --</option>
-                            {availableSentences.map(s => (
-                            <option key={s.id} value={s.id}>{s.label}</option>
-                            ))}
-                        </select>
+                        {/* Manual Select Block */}
+                        <div className="bg-white p-6 rounded-xl border border-slate-200 flex flex-col justify-center">
+                            <h3 className="font-bold text-slate-700 mb-2 text-center">Kies één zin</h3>
+                            <select
+                                className="w-full px-4 py-2 rounded-lg border border-slate-300 bg-white focus:ring-2 focus:ring-blue-500 outline-none text-slate-700"
+                                onChange={(e) => handleSentenceSelect(Number(e.target.value))}
+                                defaultValue=""
+                            >
+                                <option value="" disabled>-- Selecteer --</option>
+                                {availableSentences.map(s => (
+                                <option key={s.id} value={s.id}>{s.label}</option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
                 </div>
             </main>
@@ -835,7 +848,7 @@ export default function App() {
                     )}
 
                     {/* Session Next Button */}
-                    {mode === 'session' && validationResult && (
+                    {mode === 'session' && (validationResult || showAnswerMode) && (
                         <button 
                             onClick={nextSessionSentence}
                             className="px-8 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-lg hover:bg-blue-700 hover:-translate-y-0.5 transition-all flex items-center gap-2"

@@ -31,7 +31,7 @@ export const SENTENCES: Sentence[] = [
       { id: "s1t3", text: "buurvrouw", role: "ow" },
       { id: "s1t4", text: "leest", role: "pv" },
       { id: "s1t5", text: "’s ochtends", role: "bwb" },
-      { id: "s1t6", text: "rustig", role: "bwb", newChunk: true },
+      { id: "s1t6", text: "rustig", role: "bwb" },
       { id: "s1t7", text: "de", role: "lv" },
       { id: "s1t8", text: "krant", role: "lv" },
       { id: "s1t9", text: "in", role: "bwb" },
@@ -193,7 +193,7 @@ export const SENTENCES: Sentence[] = [
       { id: "s12t5", text: "het", role: "bwb" },
       { id: "s12t6", text: "zwemmen", role: "bwb" },
       { id: "s12t7", text: "geholpen", role: "wg" },
-      { id: "s12t8", text: "door", role: "bwb" },
+      { id: "s12t8", text: "door", role: "bwb", newChunk: true },
       { id: "s12t9", text: "een", role: "bwb" },
       { id: "s12t10", text: "badmeester.", role: "bwb" }
     ]
@@ -242,20 +242,6 @@ export const SENTENCES: Sentence[] = [
       { id: "s15t5", text: "een", role: "lv" },
       { id: "s15t6", text: "kans", role: "lv" },
       { id: "s15t7", text: "gegeven?", role: "wg" }
-    ]
-  },
-  {
-    id: 16,
-    label: "Zin 16: Spekglad",
-    predicateType: 'NG',
-    level: 2,
-    tokens: [
-      { id: "s16t1", text: "De", role: "ow" },
-      { id: "s16t2", text: "regen", role: "ow" },
-      { id: "s16t3", text: "maakt", role: "pv" },
-      { id: "s16t4", text: "de", role: "lv" },
-      { id: "s16t5", text: "straat", role: "lv" },
-      { id: "s16t6", text: "spekglad.", role: "nwd" }
     ]
   },
   {
