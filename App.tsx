@@ -562,7 +562,7 @@ export default function App() {
 
                         <div>
                             <h3 className="font-bold text-slate-700 mb-2">Onderdelen (Moeilijkheid)</h3>
-                            <p className="text-xs text-slate-400 mb-2">Vink uit om zinnen met deze onderdelen te verbergen.</p>
+                            <p className="text-xs text-slate-400 mb-2">Vink aan om zinnen met deze onderdelen te laten zien.</p>
                             <div className="space-y-2">
                                 <label className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
                                     <span className="font-bold text-slate-700 block text-sm">Bijstelling</span>
