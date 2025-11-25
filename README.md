@@ -17,17 +17,99 @@ De app hanteert een **twee-stappen** didactiek:
 Op het startscherm kan de training op maat worden gemaakt:
 *   **Moeilijkheidsgraad**: Filter zinnen op niveau (Basis, Middel, Hoog).
 *   **Type Gezegde**: Oefen alleen met Werkwoordelijk Gezegde (WG), Naamwoordelijk Gezegde (NG), of allebei.
-*   **Optionele onderdelen**: De volgende onderdelen kunnen aan/uit worden gezet:
+*   **Focus Oefenen**: Specifiek trainen op zinnen die een Lijdend Voorwerp, Meewerkend Voorwerp, Voorzetselvoorwerp of Bijzin bevatten.
+*   **Optionele onderdelen**: De volgende onderdelen kunnen aan/uit worden gezet (zinnen die deze bevatten worden verborgen als de optie uit staat, tenzij er een Focus is geselecteerd):
     *   *Bijstelling*
     *   *Bijvoeglijke Bepaling* (benoemen op woordniveau binnen een zinsdeel)
     *   *Voorzetselvoorwerp*
 
 ### Feedback
-De applicatie geeft directe feedback na het controleren:
-*   Zijn de zinsdelen correct geknipt?
-*   Zijn de juiste namen aan de zinsdelen gegeven?
-*   Zijn eventuele sub-rollen (zoals bijvoeglijke bepalingen) correct geplaatst?
-*   De knop "Toon antwoord" laat de volledige uitwerking zien (dit levert 0 punten op in een sessie).
+De applicatie geeft directe, formatieve feedback:
+*   **Slimme Hints**: De knop "Geef Hint" analyseert wat de leerling nog mist (eerst PV, dan OND, etc.).
+*   **Specifieke Foutmeldingen**: Als een leerling een fout maakt (bijv. LV op de plek van OND), krijgt hij een specifieke uitleg *waarom* dat niet klopt, in plaats van alleen "Fout".
+*   **Antwoordmodel**: De knop "Toon antwoord" laat de volledige uitwerking zien.
+
+## Nieuwe Zinnen Toevoegen (Content Management)
+
+Alle zinnen staan in het bestand `constants.ts` in de lijst `SENTENCES`. Om een nieuwe zin toe te voegen, voeg je een nieuw object toe aan deze lijst.
+
+### Datastructuur
+Een zin ziet er in de code als volgt uit:
+
+```typescript
+{
+  id: 101,                        // Uniek nummer (oplopend)
+  label: "Zin 101: Korte titel",  // Zichtbaar in het dropdown menu
+  predicateType: 'WG',            // Of 'NG' (Naamwoordelijk)
+  level: 2,                       // 1 (Basis), 2 (Middel), 3 (Hoog)
+  tokens: [                       // De lijst met woorden
+    { 
+      id: "s101t1",               // Uniek ID per woord (zinID + woordID)
+      text: "Gisteren",           // Het woord zelf
+      role: "bwb"                 // De grammaticale rol (zie types.ts)
+    },
+    { 
+      id: "s101t2", 
+      text: "zag", 
+      role: "pv" 
+    },
+    { 
+      id: "s101t3", 
+      text: "ik", 
+      role: "ow" 
+    },
+    { 
+      id: "s101t4", 
+      text: "een", 
+      role: "lv" 
+    },
+    { 
+      id: "s101t5", 
+      text: "rode", 
+      role: "lv", 
+      subRole: "bijv_bep"         // Optioneel: Woord is een BB binnen het zinsdeel
+    },
+    { 
+      id: "s101t6", 
+      text: "auto.", 
+      role: "lv" 
+    }
+  ]
+}
+```
+
+### Belangrijke Regels & Trucs
+
+1.  **Aaneengesloten zinsdelen:**
+    De app ziet opeenvolgende woorden met dezelfde `role` (bijv. drie keer `"lv"`) automatisch als één zinsdeel.
+
+2.  **De `newChunk` regel (Cruciaal!):**
+    Soms staan er twee *verschillende* zinsdelen naast elkaar die *toevallig* dezelfde rol hebben. Bijvoorbeeld twee Bijwoordelijke Bepalingen: *"Gisteren (BWB) in de tuin (BWB)..."*.
+    Om te voorkomen dat de app deze samenvoegt, moet je bij het **eerste woord van het tweede zinsdeel** de eigenschap `newChunk: true` toevoegen.
+    
+    *Voorbeeld:*
+    ```typescript
+    { text: "Gisteren", role: "bwb" },
+    { text: "in", role: "bwb", newChunk: true }, // Forceer een knip hier!
+    { text: "de", role: "bwb" },
+    { text: "tuin", role: "bwb" },
+    ```
+
+3.  **Samengestelde Zinnen:**
+    Voor zinnen met een bijzin (Opgave C) gebruiken we de rol `"bijzin"`. Alle woorden van de bijzin krijgen `role: "bijzin"`. De hoofdzin wordt normaal ontleed.
+
+4.  **Beschikbare Rollen (`RoleKey`):**
+    *   `pv` (Persoonsvorm)
+    *   `ow` (Onderwerp)
+    *   `wg` (Werkwoordelijk Gezegde - rest)
+    *   `ng` (Naamwoordelijk Gezegde - rest, bij koppelwerkwoord)
+    *   `lv` (Lijdend Voorwerp)
+    *   `mv` (Meewerkend Voorwerp)
+    *   `vv` (Voorzetselvoorwerp)
+    *   `bwb` (Bijwoordelijke Bepaling)
+    *   `bijst` (Bijstelling)
+    *   `bijzin` (Voor complete bijzinnen)
+    *   `nwd` (Naamwoordelijk deel, gebruik hiervoor de key `nwd`, de app toont dit als NG)
 
 ## Installatie & Gebruik Lokaal
 
@@ -66,13 +148,13 @@ Deze app gebruikt **Vite** en **TypeScript**. Webbrowsers kunnen dit niet direct
 
 *   **`index.html`**: De entrypoint voor Vite (verwijst naar `index.tsx`).
 *   **`App.tsx`**: De hoofdcomponent met navigatie, state en logica.
-*   **`constants.ts`**: De database met zinnen (`SENTENCES`) en rollen (`ROLES`).
+*   **`constants.ts`**: De database met zinnen (`SENTENCES`), rollen (`ROLES`) en feedbackregels.
 *   **`types.ts`**: TypeScript definities.
 *   **`components/`**: UI componenten (`DropZone`, `WordChip`).
 
-## Toekomstvisie: Samengestelde Zinnen
+## Toekomstvisie: Samengestelde Zinnen (Volledig)
 
-Om in de toekomst samengestelde zinnen (hoofd- en bijzinnen) te ondersteunen, moet de datastructuur worden aangepast.
+In de huidige versie worden bijzinnen als één blok ("Bijzin") behandeld. Om in de toekomst volledige ontleding *binnen* de bijzin mogelijk te maken, moet de datastructuur worden aangepast.
 
 **Architectuurplan:**
 De structuur evolueert van `Sentence -> Tokens[]` naar `Sentence -> Clause[] -> Tokens[]`.

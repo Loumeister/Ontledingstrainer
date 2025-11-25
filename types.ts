@@ -1,5 +1,5 @@
 
-export type RoleKey = 'pv' | 'ow' | 'lv' | 'mv' | 'bwb' | 'bijv_bep' | 'vv' | 'wg' | 'nwd' | 'bijst';
+export type RoleKey = 'pv' | 'ow' | 'lv' | 'mv' | 'bwb' | 'bijv_bep' | 'vv' | 'wg' | 'nwd' | 'bijst' | 'bijzin';
 
 export type PredicateType = 'WG' | 'NG';
 

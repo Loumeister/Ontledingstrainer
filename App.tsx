@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { SENTENCES, ROLES, FEEDBACK_RULES, HINTS } from './constants';
+import { SENTENCES, ROLES, FEEDBACK_MATRIX, FEEDBACK_STRUCTURE, HINTS } from './constants';
 import { Sentence, PlacementMap, RoleKey, Token, RoleDefinition, DifficultyLevel, ValidationState } from './types';
 import { DraggableRole } from './components/WordChip';
 import { SentenceChunk } from './components/DropZone';
@@ -20,9 +19,13 @@ export default function App() {
   // Configuration State
   const [predicateMode, setPredicateMode] = useState<PredicateMode>('ALL');
   
-  // Sentence Part Filters
-  const [includeLV, setIncludeLV] = useState(true); // Default true as it is a core constituent
-  const [includeMV, setIncludeMV] = useState(false);
+  // Focus Filters (Require specific parts)
+  const [focusLV, setFocusLV] = useState(false);
+  const [focusMV, setFocusMV] = useState(false);
+  const [focusVV, setFocusVV] = useState(false);
+  const [focusBijzin, setFocusBijzin] = useState(false); 
+
+  // Complexity Filters (Exclude complex parts if unchecked)
   const [includeBijst, setIncludeBijst] = useState(false);
   const [includeBB, setIncludeBB] = useState(false);
   const [includeVV, setIncludeVV] = useState(false);
@@ -64,16 +67,48 @@ export default function App() {
 
   const getFilteredSentences = () => {
     return SENTENCES.filter(s => {
+      // 1. Predicate Type Filter
       if (predicateMode === 'WG' && s.predicateType !== 'WG') return false;
       if (predicateMode === 'NG' && s.predicateType !== 'NG') return false;
       
-      // Filter based on included parts
-      if (!includeLV && s.tokens.some(t => t.role === 'lv')) return false;
-      if (!includeMV && s.tokens.some(t => t.role === 'mv')) return false;
-      if (!includeBijst && s.tokens.some(t => t.role === 'bijst')) return false;
-      if (!includeVV && s.tokens.some(t => t.role === 'vv')) return false;
+      // 2. Focus Filters (OR Logic)
+      const focusFiltersActive = focusLV || focusMV || focusVV || focusBijzin;
       
+      if (focusFiltersActive) {
+        const matchesFocus = (
+            (focusLV && s.tokens.some(t => t.role === 'lv')) ||
+            (focusMV && s.tokens.some(t => t.role === 'mv')) ||
+            (focusVV && s.tokens.some(t => t.role === 'vv')) ||
+            (focusBijzin && s.tokens.some(t => t.role === 'bijzin'))
+        );
+        if (!matchesFocus) return false;
+      }
+      
+      const isBijzinTarget = focusBijzin && s.tokens.some(t => t.role === 'bijzin');
+
+      // 3. Complexity Filters based on Level
+      // Logic: If Level is High (3) or All (null), we DO NOT exclude complex parts (Bijst, VV) even if checkboxes are off.
+      // If Level is Low (1), we exclude them unless checked.
+      // If Level is Mid (2), we include VV (standard for lvl 2) but exclude Bijst.
+
+      const isLevelHighOrAll = selectedLevel === 3 || selectedLevel === null;
+      const isLevelMid = selectedLevel === 2;
+      const isLevelLow = selectedLevel === 1;
+
+      // Filter Bijstelling: Exclude if (Low or Mid) AND not checked AND not a specific target
+      if (!isLevelHighOrAll && !includeBijst && !isBijzinTarget && s.tokens.some(t => t.role === 'bijst')) {
+          return false;
+      }
+      
+      // Filter VV: Exclude if (Low) AND not checked AND not focused/target
+      // (Level 2+ includes VV natively)
+      if (isLevelLow && !includeVV && !focusVV && !isBijzinTarget && s.tokens.some(t => t.role === 'vv')) {
+          return false;
+      }
+      
+      // 4. Level Filter
       if (selectedLevel !== null && s.level !== selectedLevel) return false;
+
       return true;
     });
   };
@@ -81,7 +116,7 @@ export default function App() {
   const startSession = () => {
     const pool = getFilteredSentences();
     if (pool.length === 0) {
-      alert("Geen zinnen beschikbaar met de huidige filters.");
+      alert("Geen zinnen beschikbaar met de huidige filters. Probeer minder filters te selecteren.");
       return;
     }
     const shuffled = [...pool].sort(() => 0.5 - Math.random());
@@ -251,7 +286,6 @@ export default function App() {
         return;
     }
 
-    // Check if any objects are missed
     const missingRoles = new Set<RoleKey>();
     currentSentence.tokens.forEach(t => {
         if (!usedRoles.includes(t.role)) {
@@ -304,11 +338,10 @@ export default function App() {
 
       if (!isValidSplit) {
         chunkStatus[idx] = 'incorrect-split';
-        // Specific splitting feedback
         if (!isConsistentRole || missedInternalSplit) {
-            chunkFeedback[idx] = "De woorden in dit blokje horen niet (allemaal) bij elkaar.";
+            chunkFeedback[idx] = FEEDBACK_STRUCTURE.INCONSISTENT;
         } else if (splitTooEarly || startedTooLate) {
-            chunkFeedback[idx] = "Dit zinsdeel is nog niet compleet (er hoort nog iets bij).";
+            chunkFeedback[idx] = FEEDBACK_STRUCTURE.TOO_MANY_SPLITS;
         } else {
             chunkFeedback[idx] = "De verdeling klopt niet.";
         }
@@ -321,20 +354,18 @@ export default function App() {
           chunkStatus[idx] = 'correct';
           correctChunksCount++;
         } else {
-          // Logic for specific feedback / warnings
           if (firstTokenRole === 'pv' && userLabel === 'wg') {
-             // Special case: User labeled PV as WG. 
              chunkStatus[idx] = 'warning';
-             chunkFeedback[idx] = FEEDBACK_RULES['wg']['pv'];
+             chunkFeedback[idx] = FEEDBACK_MATRIX['wg'] && FEEDBACK_MATRIX['wg']['pv'] ? FEEDBACK_MATRIX['wg']['pv'] : "Dit hoort bij het gezegde.";
           } else {
              chunkStatus[idx] = 'incorrect-role';
-             // Get intelligent error message
-             if (userLabel && FEEDBACK_RULES[userLabel] && FEEDBACK_RULES[userLabel][firstTokenRole]) {
-                 chunkFeedback[idx] = FEEDBACK_RULES[userLabel][firstTokenRole];
+             if (userLabel && FEEDBACK_MATRIX[userLabel] && FEEDBACK_MATRIX[userLabel][firstTokenRole]) {
+                 chunkFeedback[idx] = FEEDBACK_MATRIX[userLabel][firstTokenRole];
              } else {
-                 chunkFeedback[idx] = "Dit is niet de juiste benaming.";
+                 const userRoleName = ROLES.find(r => r.key === userLabel)?.label || "Gekozen";
+                 const correctRoleName = ROLES.find(r => r.key === firstTokenRole)?.label || "Juiste";
+                 chunkFeedback[idx] = `Dit is niet het ${userRoleName}, maar het ${correctRoleName}.`;
              }
-             
              const roleName = ROLES.find(r => r.key === firstTokenRole)?.label || firstTokenRole;
              currentMistakes[roleName] = (currentMistakes[roleName] || 0) + 1;
           }
@@ -483,7 +514,7 @@ export default function App() {
                            </div>
                         </div>
                         <div>
-                           <h3 className="font-bold text-slate-700 mb-2">Soort Gezegde</h3>
+                           <h3 className="font-bold text-slate-700 mb-2">Soort Zinnen & Gezegde</h3>
                            <div className="flex flex-col gap-2">
                                 <label className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all ${predicateMode === 'WG' ? 'bg-blue-50 border-blue-500 text-blue-800' : 'hover:bg-slate-50 border-slate-200'}`}>
                                     <input type="radio" name="pred" className="w-4 h-4 text-blue-600" checked={predicateMode === 'WG'} onChange={() => setPredicateMode('WG')} />
@@ -502,48 +533,53 @@ export default function App() {
                     </div>
 
                     {/* Settings */}
-                    <div className="space-y-3">
-                        <h3 className="font-bold text-slate-700">Onderdelen</h3>
-                        
-                        <label className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
-                            <div>
-                                <span className="font-bold text-slate-700 block text-sm">Lijdend Voorwerp</span>
-                                <span className="text-xs text-slate-400">Zinnen met LV tonen.</span>
-                            </div>
-                            <input type="checkbox" className="w-5 h-5 text-blue-600 rounded" checked={includeLV} onChange={(e) => setIncludeLV(e.target.checked)} />
-                        </label>
+                    <div className="space-y-6">
+                        <div>
+                            <h3 className="font-bold text-slate-700 mb-2">Specifiek Oefenen (Focus)</h3>
+                            <p className="text-xs text-slate-400 mb-2">Vink aan om alleen zinnen te tonen met dit onderdeel.</p>
+                            <div className="space-y-2">
+                                <label className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                                    <span className="font-bold text-slate-700 block text-sm">Lijdend Voorwerp</span>
+                                    <input type="checkbox" className="w-5 h-5 text-blue-600 rounded" checked={focusLV} onChange={(e) => setFocusLV(e.target.checked)} />
+                                </label>
 
-                        <label className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
-                            <div>
-                                <span className="font-bold text-slate-700 block text-sm">Meewerkend Voorwerp</span>
-                                <span className="text-xs text-slate-400">Zinnen met MV tonen.</span>
-                            </div>
-                            <input type="checkbox" className="w-5 h-5 text-blue-600 rounded" checked={includeMV} onChange={(e) => setIncludeMV(e.target.checked)} />
-                        </label>
+                                <label className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                                    <span className="font-bold text-slate-700 block text-sm">Meewerkend Voorwerp</span>
+                                    <input type="checkbox" className="w-5 h-5 text-blue-600 rounded" checked={focusMV} onChange={(e) => setFocusMV(e.target.checked)} />
+                                </label>
 
-                        <label className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
-                            <div>
-                                <span className="font-bold text-slate-700 block text-sm">Bijstelling</span>
-                                <span className="text-xs text-slate-400">Zinnen met bijstellingen tonen.</span>
-                            </div>
-                            <input type="checkbox" className="w-5 h-5 text-blue-600 rounded" checked={includeBijst} onChange={(e) => setIncludeBijst(e.target.checked)} />
-                        </label>
+                                <label className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                                    <span className="font-bold text-slate-700 block text-sm">Voorzetselvoorwerp</span>
+                                    <input type="checkbox" className="w-5 h-5 text-blue-600 rounded" checked={focusVV} onChange={(e) => setFocusVV(e.target.checked)} />
+                                </label>
 
-                        <label className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
-                            <div>
-                                <span className="font-bold text-slate-700 block text-sm">Bijvoeglijke Bepaling</span>
-                                <span className="text-xs text-slate-400">Woorden binnen zinsdeel benoemen.</span>
+                                <label className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                                    <span className="font-bold text-slate-700 block text-sm">Samengestelde Zinnen (Bijzin)</span>
+                                    <input type="checkbox" className="w-5 h-5 text-blue-600 rounded" checked={focusBijzin} onChange={(e) => setFocusBijzin(e.target.checked)} />
+                                </label>
                             </div>
-                            <input type="checkbox" className="w-5 h-5 text-blue-600 rounded" checked={includeBB} onChange={(e) => setIncludeBB(e.target.checked)} />
-                        </label>
+                        </div>
 
-                        <label className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
-                            <div>
-                                <span className="font-bold text-slate-700 block text-sm">Voorzetselvoorwerp</span>
-                                <span className="text-xs text-slate-400">Zinnen met VV tonen.</span>
+                        <div>
+                            <h3 className="font-bold text-slate-700 mb-2">Onderdelen (Moeilijkheid)</h3>
+                            <p className="text-xs text-slate-400 mb-2">Vink uit om zinnen met deze onderdelen te verbergen.</p>
+                            <div className="space-y-2">
+                                <label className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                                    <span className="font-bold text-slate-700 block text-sm">Bijstelling</span>
+                                    <input type="checkbox" className="w-5 h-5 text-blue-600 rounded" checked={includeBijst} onChange={(e) => setIncludeBijst(e.target.checked)} />
+                                </label>
+
+                                <label className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                                    <span className="font-bold text-slate-700 block text-sm">Bijvoeglijke Bepaling</span>
+                                    <input type="checkbox" className="w-5 h-5 text-blue-600 rounded" checked={includeBB} onChange={(e) => setIncludeBB(e.target.checked)} />
+                                </label>
+
+                                <label className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
+                                    <span className="font-bold text-slate-700 block text-sm">Voorzetselvoorwerp</span>
+                                    <input type="checkbox" className="w-5 h-5 text-blue-600 rounded" checked={includeVV} onChange={(e) => setIncludeVV(e.target.checked)} />
+                                </label>
                             </div>
-                            <input type="checkbox" className="w-5 h-5 text-blue-600 rounded" checked={includeVV} onChange={(e) => setIncludeVV(e.target.checked)} />
-                        </label>
+                        </div>
                     </div>
 
                     {/* Actions */}
@@ -697,7 +733,10 @@ export default function App() {
                         <div>
                            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Zinsdelen & Gezegde:</p>
                            <div className="flex flex-wrap gap-2">
-                            {ROLES.filter(r => !r.isSubOnly).filter(r => includeVV || r.key !== 'vv').map(role => (
+                            {ROLES.filter(r => !r.isSubOnly)
+                                  .filter(r => (includeVV || focusVV) || r.key !== 'vv')
+                                  .filter(r => r.key !== 'bijzin' || focusBijzin || selectedLevel === 3)
+                                  .map(role => (
                               <DraggableRole key={role.key} role={role} onDragStart={handleDragStart} />
                             ))}
                            </div>
