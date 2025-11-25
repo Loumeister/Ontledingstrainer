@@ -1,4 +1,3 @@
-
 import { RoleDefinition, Sentence } from './types';
 
 export const ROLES: RoleDefinition[] = [
@@ -15,11 +14,13 @@ export const ROLES: RoleDefinition[] = [
   { key: 'wg', label: 'Werkwoordelijk Gezegde', shortLabel: 'WG', colorClass: 'bg-rose-100 text-rose-800', borderColorClass: 'border-rose-300' },
   { key: 'nwd', label: 'Naamwoordelijk Gezegde', shortLabel: 'NG', colorClass: 'bg-yellow-50 text-yellow-700', borderColorClass: 'border-yellow-200' },
 
-  // Structural/Clause Roles (New)
-  { key: 'bijzin', label: 'Bijzin', shortLabel: 'BIJZIN', colorClass: 'bg-fuchsia-100 text-fuchsia-800', borderColorClass: 'border-fuchsia-300' },
-
-  // Internal Structure
+  // Structural/Clause Roles
+  { key: 'bijzin', label: 'Bijzin', shortLabel: 'BIJZIN', colorClass: 'bg-purple-100 text-purple-800', borderColorClass: 'border-purple-300' },
+  { key: 'vw_neven', label: 'Nevenschikkend VW', shortLabel: 'NEVEN', colorClass: 'bg-stone-100 text-stone-700', borderColorClass: 'border-stone-300' },
+  
+  // Internal Structure (Sub-roles)
   { key: 'bijv_bep', label: 'Bijvoeglijke Bepaling', shortLabel: 'BB', colorClass: 'bg-teal-50 text-teal-700', borderColorClass: 'border-teal-200', isSubOnly: true },
+  { key: 'vw_onder', label: 'Onderschikkend VW', shortLabel: 'ONDER', colorClass: 'bg-stone-100 text-stone-700', borderColorClass: 'border-stone-300', isSubOnly: true },
 ];
 
 // Feedback for structural errors (Step 1)
@@ -78,11 +79,17 @@ export const FEEDBACK_MATRIX: Record<string, Record<string, string>> = {
     'bwb': "Hoewel deze bijzin functioneert als een BWB, noemen we het in deze oefening een 'Bijzin'.",
     'ond': "Deze hele zin functioneert als onderwerp, maar noem het hier een 'Bijzin'.",
     'lv': "Deze hele zin functioneert als lijdend voorwerp, maar noem het hier een 'Bijzin'."
+  },
+  'vw_onder': {
+    'vw_neven': "Dit is een onderschikkend voegwoord, want het leidt een bijzin in."
+  },
+  'vw_neven': {
+    'vw_onder': "Dit is een nevenschikkend voegwoord (zoals 'en', 'maar', 'want'). Het verbindt twee hoofdzinnen."
   }
 };
 
 export const HINTS = {
-  MISSING_PV: "Tip: Zoek eerst de persoonsvorm. Doe de tijds- en/of getalsproef.",
+  MISSING_PV: "Tip: Zoek eerst de persoonsvorm. Maak de zin vragend of verander de tijd.",
   MISSING_OW: "Tip: Zoek het onderwerp. Vraag: Wie of wat + persoonsvorm?",
   MISSING_WG: "Tip: Maak het gezegde compleet. Welke andere werkwoorden staan er in de zin?",
   MISSING_NG: "Tip: Dit is een zin met een koppelwerkwoord. Zoek het Naamwoordelijk Gezegde (wat wordt er gezegd over het onderwerp?).",
@@ -395,17 +402,17 @@ export const SENTENCES: Sentence[] = [
   },
   {
     id: 21,
-    label: "Zin 21: Weet jij...",
+    label: "Zin 21: Jij vroeg mij...",
     predicateType: 'WG',
-    level: 1,
+    level: 2,
     tokens: [
-      { id: "s21t1", text: "Weet", role: "pv" },
-      { id: "s21t2", text: "jij", role: "ow" },
-      { id: "s21t3", text: "waarom", role: "lv" },
-      { id: "s21t4", text: "hij", role: "lv" },
-      { id: "s21t5", text: "zo", role: "lv" },
-      { id: "s21t6", text: "boos", role: "lv" },
-      { id: "s21t7", text: "is?", role: "lv" }
+      { id: "s21t1", text: "Jij", role: "ow" },
+      { id: "s21t2", text: "vroeg", role: "pv" },
+      { id: "s21t3", text: "mij", role: "mv" },
+      { id: "s21t4", text: "toch", role: "bwb" },
+      { id: "s21t5", text: "naar", role: "vv" },
+      { id: "s21t6", text: "de", role: "vv" },
+      { id: "s21t7", text: "weg?", role: "vv" }
     ]
   },
   {
@@ -759,7 +766,7 @@ export const SENTENCES: Sentence[] = [
       { id: "s42t2", text: "vinden", role: "pv" },
       { id: "s42t3", text: "het", role: "lv" },
       { id: "s42t4", text: "soms", role: "bwb" },
-      { id: "s42t5", text: "lastig", role: "bwb", newChunk: true },
+      { id: "s42t5", text: "lastig", role: "nwd" },
       { id: "s42t6", text: "om", role: "vv" },
       { id: "s42t7", text: "iedereen", role: "vv" },
       { id: "s42t8", text: "tegelijk", role: "vv", subRole: "bijv_bep" },
@@ -1079,7 +1086,7 @@ export const SENTENCES: Sentence[] = [
       { id: "s60t3", text: "snor", role: "bwb" },
       { id: "s60t4", text: "lijkt", role: "pv" },
       { id: "s60t5", text: "hij", role: "ow" },
-      { id: "s60t6", text: "heel", role: "bwb", newChunk: true },
+      { id: "s60t6", text: "heel", role: "bwb" },
       { id: "s60t7", text: "erg", role: "bwb" },
       { id: "s60t8", text: "op", role: "vv" },
       { id: "s60t9", text: "zo’n", role: "vv", subRole: "bijv_bep" },
@@ -1364,13 +1371,13 @@ export const SENTENCES: Sentence[] = [
       { id: "s76t1", text: "De", role: "ow" },
       { id: "s76t2", text: "onderzoekers", role: "ow" },
       { id: "s76t3", text: "noemen", role: "pv" },
-      { id: "s76t4", text: "deze", role: "lv", subRole: "bijv_bep" }, // User called it LV, technically Obj1
+      { id: "s76t4", text: "deze", role: "lv", subRole: "bijv_bep" },
       { id: "s76t5", text: "onverwachte", role: "lv", subRole: "bijv_bep" },
       { id: "s76t6", text: "uitkomst", role: "lv" },
       { id: "s76t7", text: "in", role: "bwb" },
       { id: "s76t8", text: "hun", role: "bwb", subRole: "bijv_bep" },
       { id: "s76t9", text: "publicatie", role: "bwb" },
-      { id: "s76t10", text: "een", role: "bwb" }, // Treating as BWB/Predicative Adjunct to fit user schema of LV/MV
+      { id: "s76t10", text: "een", role: "bwb" },
       { id: "s76t11", text: "belangrijke", role: "bwb", subRole: "bijv_bep" },
       { id: "s76t12", text: "kanteling", role: "bwb" },
       { id: "s76t13", text: "in", role: "bwb" },
@@ -2211,11 +2218,11 @@ export const SENTENCES: Sentence[] = [
   // --- NEW COMPOUND SENTENCES (Opgave C) ---
   {
     id: 201,
-    label: "Zin 201: Thuiswerken (Bijzin)",
+    label: "Zin 201: Thuiswerken",
     predicateType: 'WG',
     level: 3,
     tokens: [
-      { id: "c1t1", text: "Omdat", role: "bijzin" },
+      { id: "c1t1", text: "Omdat", role: "bijzin", subRole: "vw_onder" },
       { id: "c1t2", text: "ik", role: "bijzin" },
       { id: "c1t3", text: "verkouden", role: "bijzin" },
       { id: "c1t4", text: "ben,", role: "bijzin" },
@@ -2227,7 +2234,7 @@ export const SENTENCES: Sentence[] = [
   },
   {
     id: 202,
-    label: "Zin 202: Beroemde zanger (Bijzin)",
+    label: "Zin 202: Beroemde zanger",
     predicateType: 'WG',
     level: 3,
     tokens: [
@@ -2238,7 +2245,7 @@ export const SENTENCES: Sentence[] = [
       { id: "c2t5", text: "naar", role: "bwb" },
       { id: "c2t6", text: "zijn", role: "bwb", subRole: "bijv_bep" },
       { id: "c2t7", text: "auto,", role: "bwb" },
-      { id: "c2t8", text: "omdat", role: "bijzin" },
+      { id: "c2t8", text: "omdat", role: "bijzin", subRole: "vw_onder" },
       { id: "c2t9", text: "een", role: "bijzin" },
       { id: "c2t10", text: "horde", role: "bijzin" },
       { id: "c2t11", text: "fans", role: "bijzin" },
@@ -2248,7 +2255,7 @@ export const SENTENCES: Sentence[] = [
   },
   {
     id: 203,
-    label: "Zin 203: In de war (Bijzin)",
+    label: "Zin 203: In de war (Nevenschikking)",
     predicateType: 'NG',
     level: 3,
     tokens: [
@@ -2257,17 +2264,17 @@ export const SENTENCES: Sentence[] = [
       { id: "c3t3", text: "in", role: "nwd" },
       { id: "c3t4", text: "de", role: "nwd" },
       { id: "c3t5", text: "war,", role: "nwd" },
-      { id: "c3t6", text: "maar", role: "bijzin" },
-      { id: "c3t7", text: "ik", role: "bijzin" },
-      { id: "c3t8", text: "bedenk", role: "bijzin" },
-      { id: "c3t9", text: "wel", role: "bijzin" },
-      { id: "c3t10", text: "een", role: "bijzin" },
-      { id: "c3t11", text: "oplossing.", role: "bijzin" }
+      { id: "c3t6", text: "maar", role: "vw_neven" }, // Nevenschikking splits de zinnen
+      { id: "c3t7", text: "ik", role: "ow" },
+      { id: "c3t8", text: "bedenk", role: "pv" },
+      { id: "c3t9", text: "wel", role: "bwb" },
+      { id: "c3t10", text: "een", role: "lv" },
+      { id: "c3t11", text: "oplossing.", role: "lv" }
     ]
   },
   {
     id: 204,
-    label: "Zin 204: Max piloot (Bijzin)",
+    label: "Zin 204: Max piloot (Nevenschikking)",
     predicateType: 'NG',
     level: 3,
     tokens: [
@@ -2279,17 +2286,17 @@ export const SENTENCES: Sentence[] = [
       { id: "c4t6", text: "mijn", role: "bijst" },
       { id: "c4t7", text: "buurjongen,", role: "bijst" },
       { id: "c4t8", text: "piloot,", role: "nwd" },
-      { id: "c4t9", text: "want", role: "bijzin" },
-      { id: "c4t10", text: "hij", role: "bijzin" },
-      { id: "c4t11", text: "heeft", role: "bijzin" },
-      { id: "c4t12", text: "zijn", role: "bijzin" },
-      { id: "c4t13", text: "studie", role: "bijzin" },
-      { id: "c4t14", text: "afgerond.", role: "bijzin" }
+      { id: "c4t9", text: "want", role: "vw_neven" },
+      { id: "c4t10", text: "hij", role: "ow" },
+      { id: "c4t11", text: "heeft", role: "pv" },
+      { id: "c4t12", text: "zijn", role: "lv", subRole: "bijv_bep" },
+      { id: "c4t13", text: "studie", role: "lv" },
+      { id: "c4t14", text: "afgerond.", role: "wg" }
     ]
   },
   {
     id: 205,
-    label: "Zin 205: Schoonmoeder (Bijzin)",
+    label: "Zin 205: Schoonmoeder",
     predicateType: 'NG',
     level: 3,
     tokens: [
@@ -2298,7 +2305,7 @@ export const SENTENCES: Sentence[] = [
       { id: "c5t3", text: "is", role: "pv" },
       { id: "c5t4", text: "zeer", role: "nwd", subRole: "bijv_bep" },
       { id: "c5t5", text: "goedgelovig,", role: "nwd" },
-      { id: "c5t6", text: "daardoor", role: "bijzin" },
+      { id: "c5t6", text: "daardoor", role: "bijzin", subRole: "vw_onder" }, // Voegwoordelijk bijwoord, fungeert als verbinding
       { id: "c5t7", text: "wordt", role: "bijzin" },
       { id: "c5t8", text: "zij", role: "bijzin" },
       { id: "c5t9", text: "vaak", role: "bijzin" },
@@ -2307,11 +2314,11 @@ export const SENTENCES: Sentence[] = [
   },
   {
     id: 206,
-    label: "Zin 206: Schurk (Bijzin)",
+    label: "Zin 206: Schurk",
     predicateType: 'WG',
     level: 3,
     tokens: [
-      { id: "c6t1", text: "Terwijl", role: "bijzin" },
+      { id: "c6t1", text: "Terwijl", role: "bijzin", subRole: "vw_onder" },
       { id: "c6t2", text: "zij", role: "bijzin" },
       { id: "c6t3", text: "haar", role: "bijzin" },
       { id: "c6t4", text: "auto", role: "bijzin" },
@@ -2327,7 +2334,7 @@ export const SENTENCES: Sentence[] = [
   },
   {
     id: 207,
-    label: "Zin 207: Sleutel kwijt (Bijzin)",
+    label: "Zin 207: Sleutel kwijt (Nevenschikking)",
     predicateType: 'WG',
     level: 3,
     tokens: [
@@ -2335,13 +2342,13 @@ export const SENTENCES: Sentence[] = [
       { id: "c7t2", text: "had", role: "pv" },
       { id: "c7t3", text: "willen", role: "wg" },
       { id: "c7t4", text: "komen,", role: "wg" },
-      { id: "c7t5", text: "maar", role: "bijzin" },
-      { id: "c7t6", text: "ik", role: "bijzin" },
-      { id: "c7t7", text: "was", role: "bijzin" },
-      { id: "c7t8", text: "mijn", role: "bijzin" },
-      { id: "c7t9", text: "sleutel", role: "bijzin" },
-      { id: "c7t10", text: "kwijt", role: "bijzin" },
-      { id: "c7t11", text: "waardoor", role: "bijzin" },
+      { id: "c7t5", text: "maar", role: "vw_neven" },
+      { id: "c7t6", text: "ik", role: "ow" },
+      { id: "c7t7", text: "was", role: "pv" },
+      { id: "c7t8", text: "mijn", role: "lv", subRole: "bijv_bep" },
+      { id: "c7t9", text: "sleutel", role: "lv" },
+      { id: "c7t10", text: "verloren", role: "wg" }, // 'verloren' is deel van WG 'kwijt zijn'
+      { id: "c7t11", text: "waardoor", role: "bijzin", subRole: "vw_onder" },
       { id: "c7t12", text: "ik", role: "bijzin" },
       { id: "c7t13", text: "niet", role: "bijzin" },
       { id: "c7t14", text: "kon", role: "bijzin" },
@@ -2350,11 +2357,11 @@ export const SENTENCES: Sentence[] = [
   },
   {
     id: 208,
-    label: "Zin 208: Reis Azië (Bijzin)",
+    label: "Zin 208: Reis Azië",
     predicateType: 'WG',
     level: 3,
     tokens: [
-      { id: "c8t1", text: "Toen", role: "bijzin" },
+      { id: "c8t1", text: "Toen", role: "bijzin", subRole: "vw_onder" },
       { id: "c8t2", text: "ik", role: "bijzin" },
       { id: "c8t3", text: "droomde", role: "bijzin" },
       { id: "c8t4", text: "over", role: "bijzin" },
@@ -2371,7 +2378,7 @@ export const SENTENCES: Sentence[] = [
   },
   {
     id: 209,
-    label: "Zin 209: Groen drankje (Bijzin)",
+    label: "Zin 209: Groen drankje (Nevenschikking)",
     predicateType: 'WG',
     level: 3,
     tokens: [
@@ -2381,15 +2388,15 @@ export const SENTENCES: Sentence[] = [
       { id: "c9t4", text: "een", role: "lv" },
       { id: "c9t5", text: "groen", role: "lv", subRole: "bijv_bep" },
       { id: "c9t6", text: "drankje", role: "lv" },
-      { id: "c9t7", text: "maar", role: "bijzin" },
-      { id: "c9t8", text: "ik", role: "bijzin" },
-      { id: "c9t9", text: "weigerde", role: "bijzin" },
-      { id: "c9t10", text: "het.", role: "bijzin" }
+      { id: "c9t7", text: "maar", role: "vw_neven" },
+      { id: "c9t8", text: "ik", role: "ow" },
+      { id: "c9t9", text: "weigerde", role: "pv" },
+      { id: "c9t10", text: "het.", role: "lv" }
     ]
   },
   {
     id: 210,
-    label: "Zin 210: Hamburgers of kip (Bijzin)",
+    label: "Zin 210: Hamburgers of kip (Nevenschikking)",
     predicateType: 'WG',
     level: 3,
     tokens: [
@@ -2397,457 +2404,11 @@ export const SENTENCES: Sentence[] = [
       { id: "c10t2", text: "je", role: "ow" },
       { id: "c10t3", text: "van", role: "vv" },
       { id: "c10t4", text: "hamburgers", role: "vv" },
-      { id: "c10t5", text: "of", role: "bijzin" },
-      { id: "c10t6", text: "heb", role: "bijzin" },
-      { id: "c10t7", text: "je", role: "bijzin" },
-      { id: "c10t8", text: "liever", role: "bijzin" },
-      { id: "c10t9", text: "kip?", role: "bijzin" }
-    ]
-  },
-  {
-  id: 211,
-  label: "Zin 211: Boze buurman (Bijzin)",
-  predicateType: 'WG',
-  level: 2,
-  tokens: [
-    { id: "c11t1", text: "Toen", role: "bijzin" },
-    { id: "c11t2", text: "zijn", role: "bijzin", subRole: "bijv_bep" },
-    { id: "c11t3", text: "hond", role: "bijzin" },
-    { id: "c11t4", text: "wegliep,", role: "bijzin" },
-    { id: "c11t5", text: "schreeuwde", role: "pv" },
-    { id: "c11t6", text: "de", role: "ow" },
-    { id: "c11t7", text: "buurman", role: "ow" },
-    { id: "c11t8", text: "boos.", role: "bwb" }
-  ]
-},
-{
-  id: 212,
-  label: "Zin 212: Kapotte bril (Bijzin)",
-  predicateType: 'WG',
-  level: 2,
-  tokens: [
-    { id: "c12t1", text: "Ik", role: "ow" },
-    { id: "c12t2", text: "zocht", role: "pv" },
-    { id: "c12t3", text: "mijn", role: "lv", subRole: "bijv_bep" },
-    { id: "c12t4", text: "bril,", role: "lv" },
-    { id: "c12t5", text: "maar", role: "bijzin" },
-    { id: "c12t6", text: "hij", role: "bijzin" },
-    { id: "c12t7", text: "bleek", role: "bijzin" },
-    { id: "c12t8", text: "kapot.", role: "bijzin" }
-  ]
-},
-{
-  id: 213,
-  label: "Zin 213: Verlegen leerling (Bijzin)",
-  predicateType: 'NG',
-  level: 1,
-  tokens: [
-    { id: "c13t1", text: "De", role: "ow" },
-    { id: "c13t2", text: "leerling", role: "ow" },
-    { id: "c13t3", text: "is", role: "pv" },
-    { id: "c13t4", text: "erg", role: "nwd", subRole: "bijv_bep" },
-    { id: "c13t5", text: "verlegen,", role: "nwd" },
-    { id: "c13t6", text: "omdat", role: "bijzin" },
-    { id: "c13t7", text: "ze", role: "bijzin" },
-    { id: "c13t8", text: "nieuw", role: "bijzin" },
-    { id: "c13t9", text: "is.", role: "bijzin" }
-  ]
-},
-{
-  id: 214,
-  label: "Zin 214: Het cadeau (Bijzin)",
-  predicateType: 'WG',
-  level: 3,
-  tokens: [
-    { id: "c14t1", text: "Nadat", role: "bijzin" },
-    { id: "c14t2", text: "hij", role: "bijzin" },
-    { id: "c14t3", text: "het", role: "bijzin" },
-    { id: "c14t4", text: "cadeau", role: "bijzin" },
-    { id: "c14t5", text: "had", role: "bijzin" },
-    { id: "c14t6", text: "uitgepakt,", role: "bijzin" },
-    { id: "c14t7", text: "glunderde", role: "pv" },
-    { id: "c14t8", text: "de", role: "ow" },
-    { id: "c14t9", text: "jongen.", role: "ow" }
-  ]
-},
-{
-  id: 215,
-  label: "Zin 215: Nieuwe baan (Bijzin)",
-  predicateType: 'NG',
-  level: 2,
-  tokens: [
-    { id: "c15t1", text: "Mijn", role: "ow", subRole: "bijv_bep" },
-    { id: "c15t2", text: "zus", role: "ow" },
-    { id: "c15t3", text: "is", role: "pv" },
-    { id: "c15t4", text: "dolblij,", role: "nwd" },
-    { id: "c15t5", text: "omdat", role: "bijzin" },
-    { id: "c15t6", text: "ze", role: "bijzin" },
-    { id: "c15t7", text: "een", role: "bijzin" },
-    { id: "c15t8", text: "nieuwe", role: "bijzin", subRole: "bijv_bep" },
-    { id: "c15t9", text: "baan", role: "bijzin" },
-    { id: "c15t10", text: "heeft.", role: "bijzin" }
-  ]
-},
-{
-  id: 216,
-  label: "Zin 216: Drukke bus (Bijzin)",
-  predicateType: 'WG',
-  level: 1,
-  tokens: [
-    { id: "c16t1", text: "Omdat", role: "bijzin" },
-    { id: "c16t2", text: "de", role: "bijzin" },
-    { id: "c16t3", text: "bus", role: "bijzin" },
-    { id: "c16t4", text: "stampvol", role: "bijzin" },
-    { id: "c16t5", text: "zat,", role: "bijzin" },
-    { id: "c16t6", text: "bleef", role: "pv" },
-    { id: "c16t7", text: "ik", role: "ow" },
-    { id: "c16t8", text: "staan.", role: "bwb" }
-  ]
-},
-{
-  id: 217,
-  label: "Zin 217: De stille keuken (Bijzin)",
-  predicateType: 'NG',
-  level: 3,
-  tokens: [
-    { id: "c17t1", text: "De", role: "ow" },
-    { id: "c17t2", text: "keuken", role: "ow" },
-    { id: "c17t3", text: "was", role: "pv" },
-    { id: "c17t4", text: "ongemakkelijk", role: "nwd" },
-    { id: "c17t5", text: "stil,", role: "nwd" },
-    { id: "c17t6", text: "terwijl", role: "bijzin" },
-    { id: "c17t7", text: "niemand", role: "bijzin" },
-    { id: "c17t8", text: "iets", role: "bijzin" },
-    { id: "c17t9", text: "zei.", role: "bijzin" }
-  ]
-},
-{
-  id: 218,
-  label: "Zin 218: Op het perron (Bijzin)",
-  predicateType: 'WG',
-  level: 4,
-  tokens: [
-    { id: "c18t1", text: "Toen", role: "bijzin" },
-    { id: "c18t2", text: "de", role: "bijzin" },
-    { id: "c18t3", text: "trein", role: "bijzin" },
-    { id: "c18t4", text: "eindelijk", role: "bijzin" },
-    { id: "c18t5", text: "aankwam,", role: "bijzin" },
-    { id: "c18t6", text: "probeerden", role: "pv" },
-    { id: "c18t7", text: "de", role: "ow" },
-    { id: "c18t8", text: "reizigers", role: "ow" },
-    { id: "c18t9", text: "tegelijk", role: "bwb" },
-    { id: "c18t10", text: "in", role: "bwb" },
-    { id: "c18t11", text: "te", role: "bwb" },
-    { id: "c18t12", text: "stappen.", role: "bwb" }
-  ]
-},
-{
-  id: 219,
-  label: "Zin 219: De vergeten afspraak (Bijzin)",
-  predicateType: 'WG',
-  level: 4,
-  tokens: [
-    { id: "c19t1", text: "Hoewel", role: "bijzin" },
-    { id: "c19t2", text: "ik", role: "bijzin" },
-    { id: "c19t3", text: "het", role: "bijzin" },
-    { id: "c19t4", text: "opgeschreven", role: "bijzin" },
-    { id: "c19t5", text: "had,", role: "bijzin" },
-    { id: "c19t6", text: "vergat", role: "pv" },
-    { id: "c19t7", text: "ik", role: "ow" },
-    { id: "c19t8", text: "de", role: "lv" },
-    { id: "c19t9", text: "afspraak.", role: "lv" }
-  ]
-},
-{
-  id: 211,
-  label: "Zin 211: Te laat op school (Bijzin)",
-  predicateType: 'WG',
-  level: 1,
-  tokens: [
-    { id: "c11t1", text: "Omdat", role: "bijzin" },
-    { id: "c11t2", text: "mijn", role: "bijzin" },
-    { id: "c11t3", text: "fietsband", role: "bijzin" },
-    { id: "c11t4", text: "lek", role: "bijzin" },
-    { id: "c11t5", text: "was,", role: "bijzin" },
-    { id: "c11t6", text: "kwam", role: "pv" },
-    { id: "c11t7", text: "ik", role: "ow" },
-    { id: "c11t8", text: "te", role: "bwb" },
-    { id: "c11t9", text: "laat", role: "bwb" },
-    { id: "c11t10", text: "op", role: "bwb" },
-    { id: "c11t11", text: "school.", role: "bwb" }
-  ]
-},
-{
-  id: 212,
-  label: "Zin 212: Boze buurman (Bijzin)",
-  predicateType: 'WG',
-  level: 2,
-  tokens: [
-    { id: "c12t1", text: "Toen", role: "bijzin" },
-    { id: "c12t2", text: "zijn", role: "bijzin" },
-    { id: "c12t3", text: "hond", role: "bijzin" },
-    { id: "c12t4", text: "wegliep,", role: "bijzin" },
-    { id: "c12t5", text: "schreeuwde", role: "pv" },
-    { id: "c12t6", text: "de", role: "ow" },
-    { id: "c12t7", text: "buurman", role: "ow" },
-    { id: "c12t8", text: "boos.", role: "bwb" }
-  ]
-},
-{
-  id: 213,
-  label: "Zin 213: Kapotte bril (Bijzin)",
-  predicateType: 'WG',
-  level: 2,
-  tokens: [
-    { id: "c13t1", text: "Ik", role: "ow" },
-    { id: "c13t2", text: "zocht", role: "pv" },
-    { id: "c13t3", text: "mijn", role: "lv" },
-    { id: "c13t4", text: "bril,", role: "lv" },
-    { id: "c13t5", text: "maar", role: "bijzin" },
-    { id: "c13t6", text: "hij", role: "bijzin" },
-    { id: "c13t7", text: "bleek", role: "bijzin" },
-    { id: "c13t8", text: "kapot.", role: "bijzin" }
-  ]
-},
-{
-  id: 214,
-  label: "Zin 214: Verlegen leerling (Bijzin)",
-  predicateType: 'NG',
-  level: 1,
-  tokens: [
-    { id: "c14t1", text: "De", role: "ow" },
-    { id: "c14t2", text: "leerling", role: "ow" },
-    { id: "c14t3", text: "is", role: "pv" },
-    { id: "c14t4", text: "erg", role: "nwd" },
-    { id: "c14t5", text: "verlegen,", role: "nwd" },
-    { id: "c14t6", text: "omdat", role: "bijzin" },
-    { id: "c14t7", text: "ze", role: "bijzin" },
-    { id: "c14t8", text: "nieuw", role: "bijzin" },
-    { id: "c14t9", text: "is.", role: "bijzin" }
-  ]
-},
-{
-  id: 215,
-  label: "Zin 215: Het cadeau (Bijzin)",
-  predicateType: 'WG',
-  level: 3,
-  tokens: [
-    { id: "c15t1", text: "Nadat", role: "bijzin" },
-    { id: "c15t2", text: "hij", role: "bijzin" },
-    { id: "c15t3", text: "het", role: "bijzin" },
-    { id: "c15t4", text: "cadeau", role: "bijzin" },
-    { id: "c15t5", text: "had", role: "bijzin" },
-    { id: "c15t6", text: "uitgepakt,", role: "bijzin" },
-    { id: "c15t7", text: "glunderde", role: "pv" },
-    { id: "c15t8", text: "de", role: "ow" },
-    { id: "c15t9", text: "jongen.", role: "ow" }
-  ]
-},
-{
-  id: 216,
-  label: "Zin 216: Nieuwe baan (Bijzin)",
-  predicateType: 'NG',
-  level: 2,
-  tokens: [
-    { id: "c16t1", text: "Mijn", role: "ow" },
-    { id: "c16t2", text: "zus", role: "ow" },
-    { id: "c16t3", text: "is", role: "pv" },
-    { id: "c16t4", text: "dolblij,", role: "nwd" },
-    { id: "c16t5", text: "omdat", role: "bijzin" },
-    { id: "c16t6", text: "ze", role: "bijzin" },
-    { id: "c16t7", text: "een", role: "bijzin" },
-    { id: "c16t8", text: "baan", role: "bijzin" },
-    { id: "c16t9", text: "heeft.", role: "bijzin" }
-  ]
-},
-{
-  id: 217,
-  label: "Zin 217: Drukke bus (Bijzin)",
-  predicateType: 'WG',
-  level: 1,
-  tokens: [
-    { id: "c17t1", text: "Omdat", role: "bijzin" },
-    { id: "c17t2", text: "de", role: "bijzin" },
-    { id: "c17t3", text: "bus", role: "bijzin" },
-    { id: "c17t4", text: "stampvol", role: "bijzin" },
-    { id: "c17t5", text: "zat,", role: "bijzin" },
-    { id: "c17t6", text: "bleef", role: "pv" },
-    { id: "c17t7", text: "ik", role: "ow" },
-    { id: "c17t8", text: "staan.", role: "bwb" }
-  ]
-},
-{
-  id: 218,
-  label: "Zin 218: De stille keuken (Bijzin)",
-  predicateType: 'NG',
-  level: 3,
-  tokens: [
-    { id: "c18t1", text: "De", role: "ow" },
-    { id: "c18t2", text: "keuken", role: "ow" },
-    { id: "c18t3", text: "was", role: "pv" },
-    { id: "c18t4", text: "ongemakkelijk", role: "nwd" },
-    { id: "c18t5", text: "stil,", role: "nwd" },
-    { id: "c18t6", text: "omdat", role: "bijzin" },
-    { id: "c18t7", text: "niemand", role: "bijzin" },
-    { id: "c18t8", text: "iets", role: "bijzin" },
-    { id: "c18t9", text: "zei.", role: "bijzin" }
-  ]
-},
-{
-  id: 219,
-  label: "Zin 219: Op het perron (Bijzin)",
-  predicateType: 'WG',
-  level: 4,
-  tokens: [
-    { id: "c19t1", text: "Toen", role: "bijzin" },
-    { id: "c19t2", text: "de", role: "bijzin" },
-    { id: "c19t3", text: "trein", role: "bijzin" },
-    { id: "c19t4", text: "aankwam,", role: "bijzin" },
-    { id: "c19t5", text: "probeerden", role: "pv" },
-    { id: "c19t6", text: "de", role: "ow" },
-    { id: "c19t7", text: "reizigers", role: "ow" },
-    { id: "c19t8", text: "tegelijk", role: "bwb" },
-    { id: "c19t9", text: "in", role: "bwb" },
-    { id: "c19t10", text: "te", role: "bwb" },
-    { id: "c19t11", text: "stappen.", role: "bwb" }
-  ]
-},
-{
-  id: 220,
-  label: "Zin 220: De vergeten afspraak (Bijzin)",
-  predicateType: 'WG',
-  level: 4,
-  tokens: [
-    { id: "c20t1", text: "Hoewel", role: "bijzin" },
-    { id: "c20t2", text: "ik", role: "bijzin" },
-    { id: "c20t3", text: "het", role: "bijzin" },
-    { id: "c20t4", text: "opgeschreven", role: "bijzin" },
-    { id: "c20t5", text: "had,", role: "bijzin" },
-    { id: "c20t6", text: "vergat", role: "pv" },
-    { id: "c20t7", text: "ik", role: "ow" },
-    { id: "c20t8", text: "de", role: "lv" },
-    { id: "c20t9", text: "afspraak.", role: "lv" }
-  ]
-},
-  {
-    id: 221,
-    label: "Zin 211: Wij bespreken het plan met de directie.",
-    predicateType: "WG",
-    level: 2,
-    tokens: [
-      { id: "s211t1", text: "Wij", role: "ow" },
-      { id: "s211t2", text: "bespreken", role: "pv" },
-      { id: "s211t3", text: "het", role: "lv" },
-      { id: "s211t4", text: "plan", role: "lv" },
-      { id: "s211t5", text: "met", role: "vv" },
-      { id: "s211t6", text: "de", role: "vv" },
-      { id: "s211t7", text: "directie.", role: "vv" }
-    ]
-  },
-  {
-    id: 222,
-    label: "Zin 212: Ze herkende de man aan zijn stem.",
-    predicateType: "WG",
-    level: 2,
-    tokens: [
-      { id: "s212t1", text: "Ze", role: "ow" },
-      { id: "s212t2", text: "herkende", role: "pv" },
-      { id: "s212t3", text: "de", role: "lv" },
-      { id: "s212t4", text: "man", role: "lv" },
-      { id: "s212t5", text: "aan", role: "vv" },
-      { id: "s212t6", text: "zijn", role: "vv", subRole: "bijv_bep" },
-      { id: "s212t7", text: "stem.", role: "vv" }
-    ]
-  },
-  {
-    id: 223,
-    label: "Zin 213: Hij vergeleek zijn auto met die van zijn broer.",
-    predicateType: "WG",
-    level: 2,
-    tokens: [
-      { id: "s213t1", text: "Hij", role: "ow" },
-      { id: "s213t2", text: "vergeleek", role: "pv" },
-      { id: "s213t3", text: "zijn", role: "lv", subRole: "bijv_bep" },
-      { id: "s213t4", text: "auto", role: "lv" },
-      { id: "s213t5", text: "met", role: "vv" },
-      { id: "s213t6", text: "die", role: "vv" },
-      { id: "s213t7", text: "van", role: "vv" },
-      { id: "s213t8", text: "zijn", role: "vv", subRole: "bijv_bep" },
-      { id: "s213t9", text: "broer.", role: "vv" }
-    ]
-  },
-  {
-    id: 224,
-    label: "Zin 214: De docent beoordeelt het verslag op inhoud.",
-    predicateType: "WG",
-    level: 2,
-    tokens: [
-      { id: "s214t1", text: "De", role: "ow" },
-      { id: "s214t2", text: "docent", role: "ow" },
-      { id: "s214t3", text: "beoordeelt", role: "pv" },
-      { id: "s214t4", text: "het", role: "lv" },
-      { id: "s214t5", text: "verslag", role: "lv" },
-      { id: "s214t6", text: "op", role: "vv" },
-      { id: "s214t7", text: "inhoud.", role: "vv" }
-    ]
-  },
-  {
-    id: 225,
-    label: "Zin 215: Zij feliciteerde hem met zijn overwinning.",
-    predicateType: "WG",
-    level: 2,
-    tokens: [
-      { id: "s215t1", text: "Zij", role: "ow" },
-      { id: "s215t2", text: "feliciteerde", role: "pv" },
-      { id: "s215t3", text: "hem", role: "lv" },
-      { id: "s215t4", text: "met", role: "vv" },
-      { id: "s215t5", text: "zijn", role: "vv", subRole: "bijv_bep" },
-      { id: "s215t6", text: "overwinning.", role: "vv" }
-    ]
-  },
-  {
-    id: 226,
-    label: "Zin 216: We controleren de antwoorden.",
-    predicateType: "WG",
-    level: 2,
-    tokens: [
-      { id: "s216t1", text: "We", role: "ow" },
-      { id: "s216t2", text: "controleren", role: "pv" },
-      { id: "s216t3", text: "de", role: "lv" },
-      { id: "s216t4", text: "antwoorden", role: "lv" },
-      { id: "s216t5", text: "op", role: "vv" },
-      { id: "s216t6", text: "fouten.", role: "vv" }
-    ]
-  },
-  {
-    id: 227,
-    label: "Zin 217: Het team baseert",
-    predicateType: "WG",
-    level: 2,
-    tokens: [
-      { id: "s217t1", text: "Het", role: "ow" },
-      { id: "s217t2", text: "team", role: "ow" },
-      { id: "s217t3", text: "baseert", role: "pv" },
-      { id: "s217t4", text: "de", role: "lv" },
-      { id: "s217t5", text: "strategie", role: "lv" },
-      { id: "s217t6", text: "op", role: "vv" },
-      { id: "s217t7", text: "eerdere", role: "vv", subRole: "bijv_bep" },
-      { id: "s217t8", text: "wedstrijden.", role: "vv" }
-    ]
-  },
-  {
-    id: 228,
-    label: "Zin 218: Hij stelde zijn vraag aan de jury.",
-    predicateType: "WG",
-    level: 2,
-    tokens: [
-      { id: "s218t1", text: "Hij", role: "ow" },
-      { id: "s218t2", text: "stelde", role: "pv" },
-      { id: "s218t3", text: "zijn", role: "lv", subRole: "bijv_bep" },
-      { id: "s218t4", text: "vraag", role: "lv" },
-      { id: "s218t5", text: "aan", role: "vv" },
-      { id: "s218t6", text: "de", role: "vv" },
-      { id: "s218t7", text: "jury.", role: "vv" }
+      { id: "c10t5", text: "of", role: "vw_neven" },
+      { id: "c10t6", text: "heb", role: "pv" },
+      { id: "c10t7", text: "je", role: "ow" },
+      { id: "c10t8", text: "liever", role: "bwb" },
+      { id: "c10t9", text: "kip?", role: "lv" }
     ]
   }
 ];

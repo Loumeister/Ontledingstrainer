@@ -28,8 +28,7 @@ export default function App() {
   // Complexity Filters (Exclude complex parts if unchecked)
   const [includeBijst, setIncludeBijst] = useState(false);
   const [includeBB, setIncludeBB] = useState(false);
-  // includeVV is removed from UI, effectively always false unless we rely on level logic
-  const [includeVV, setIncludeVV] = useState(false); 
+  const [includeVV, setIncludeVV] = useState(false);
   
   // New Configuration: Level & Count
   const [selectedLevel, setSelectedLevel] = useState<DifficultyLevel | null>(null); // null = all
@@ -80,12 +79,14 @@ export default function App() {
             (focusLV && s.tokens.some(t => t.role === 'lv')) ||
             (focusMV && s.tokens.some(t => t.role === 'mv')) ||
             (focusVV && s.tokens.some(t => t.role === 'vv')) ||
-            (focusBijzin && s.tokens.some(t => t.role === 'bijzin'))
+            // For compound sentences, we look for either a subordinate clause ('bijzin') OR a coordinating conjunction ('vw_neven')
+            (focusBijzin && s.tokens.some(t => t.role === 'bijzin' || t.role === 'vw_neven'))
         );
         if (!matchesFocus) return false;
       }
       
-      const isBijzinTarget = focusBijzin && s.tokens.some(t => t.role === 'bijzin');
+      // Identify if this sentence is a target of the "Samengestelde Zinnen" focus
+      const isCompoundTarget = focusBijzin && s.tokens.some(t => t.role === 'bijzin' || t.role === 'vw_neven');
 
       // 3. Complexity Filters based on Level
       const isLevelHighOrAll = selectedLevel === 3 || selectedLevel === 4 || selectedLevel === null;
@@ -93,12 +94,12 @@ export default function App() {
       const isLevelLow = selectedLevel === 1;
 
       // Filter Bijstelling: Exclude if (Low or Mid) AND not checked AND not a specific target
-      if (!isLevelHighOrAll && !includeBijst && !isBijzinTarget && s.tokens.some(t => t.role === 'bijst')) {
+      if (!isLevelHighOrAll && !includeBijst && !isCompoundTarget && s.tokens.some(t => t.role === 'bijst')) {
           return false;
       }
       
       // Filter VV: Exclude if (Low) AND not checked AND not focused/target
-      if (isLevelLow && !includeVV && !focusVV && !isBijzinTarget && s.tokens.some(t => t.role === 'vv')) {
+      if (isLevelLow && !includeVV && !focusVV && !isCompoundTarget && s.tokens.some(t => t.role === 'vv')) {
           return false;
       }
       
@@ -559,7 +560,7 @@ export default function App() {
                                 </label>
 
                                 <label className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
-                                    <span className="font-bold text-slate-700 block text-sm">Samengestelde Zinnen (Bijzin)</span>
+                                    <span className="font-bold text-slate-700 block text-sm">Samengestelde zinnen (hoofd- en bijzin)</span>
                                     <input type="checkbox" className="w-5 h-5 text-blue-600 rounded" checked={focusBijzin} onChange={(e) => setFocusBijzin(e.target.checked)} />
                                 </label>
                             </div>
@@ -734,8 +735,9 @@ export default function App() {
                            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Zinsdelen & Gezegde:</p>
                            <div className="flex flex-wrap gap-2">
                             {ROLES.filter(r => !r.isSubOnly)
-                                  .filter(r => (includeVV || focusVV || selectedLevel !== 1 || (currentSentence && currentSentence.tokens.some(t => t.role === 'vv'))) || r.key !== 'vv')
-                                  .filter(r => r.key !== 'bijzin' || focusBijzin || selectedLevel === 3)
+                                  .filter(r => (includeVV || focusVV || selectedLevel === 2 || selectedLevel === 3 || selectedLevel === 4 || selectedLevel === null || (currentSentence && currentSentence.tokens.some(t => t.role === 'vv'))) || r.key !== 'vv')
+                                  .filter(r => r.key !== 'bijzin' || focusBijzin || selectedLevel === 3 || selectedLevel === 4 || selectedLevel === null || (currentSentence && currentSentence.tokens.some(t => t.role === 'bijzin')))
+                                  .filter(r => r.key !== 'vw_neven' || focusBijzin || selectedLevel === 3 || selectedLevel === 4 || selectedLevel === null || (currentSentence && currentSentence.tokens.some(t => t.role === 'vw_neven')))
                                   .map(role => (
                               <DraggableRole key={role.key} role={role} onDragStart={handleDragStart} />
                             ))}
@@ -745,7 +747,10 @@ export default function App() {
                         <div className="border-t pt-3">
                            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Sleep op specifieke woorden:</p>
                            <div className="flex flex-wrap gap-2">
-                            {ROLES.filter(r => r.isSubOnly).map(role => (
+                            {ROLES.filter(r => r.isSubOnly)
+                                  // Ensure vw_onder is only shown when relevant (like bijzin)
+                                  .filter(r => r.key !== 'vw_onder' || focusBijzin || selectedLevel === 3 || selectedLevel === 4 || selectedLevel === null || (currentSentence && currentSentence.tokens.some(t => t.subRole === 'vw_onder')))
+                                  .map(role => (
                               <DraggableRole key={role.key} role={role} onDragStart={handleDragStart} />
                             ))}
                            </div>
@@ -795,6 +800,12 @@ export default function App() {
                       );
                     })}
                  </div>
+
+                 {hintMessage && !validationResult && (
+                    <div className="p-4 rounded-xl text-center font-bold text-lg bg-yellow-50 text-yellow-800 border border-yellow-200 animate-in slide-in-from-bottom-2 duration-300">
+                        💡 {hintMessage}
+                    </div>
+                 )}
 
                  <div className="flex justify-between items-center bg-slate-100 p-4 rounded-xl border border-slate-200 mt-8">
                     <button onClick={handleBackStep} className="text-slate-500 font-medium hover:text-slate-800 flex items-center gap-2 px-4 py-2 hover:bg-slate-200 rounded-lg transition-colors"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"></path></svg>Terug</button>
