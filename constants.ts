@@ -2295,24 +2295,6 @@ export const SENTENCES: Sentence[] = [
     ]
   },
   {
-    id: 205,
-    label: "Zin 205: Schoonmoeder",
-    predicateType: 'NG',
-    level: 3,
-    tokens: [
-      { id: "c5t1", text: "Mijn", role: "ow", subRole: "bijv_bep" },
-      { id: "c5t2", text: "schoonmoeder", role: "ow" },
-      { id: "c5t3", text: "is", role: "pv" },
-      { id: "c5t4", text: "zeer", role: "nwd", subRole: "bijv_bep" },
-      { id: "c5t5", text: "goedgelovig,", role: "nwd" },
-      { id: "c5t6", text: "daardoor", role: "bijzin", subRole: "vw_onder" }, // Voegwoordelijk bijwoord, fungeert als verbinding
-      { id: "c5t7", text: "wordt", role: "bijzin" },
-      { id: "c5t8", text: "zij", role: "bijzin" },
-      { id: "c5t9", text: "vaak", role: "bijzin" },
-      { id: "c5t10", text: "bedrogen.", role: "bijzin" }
-    ]
-  },
-  {
     id: 206,
     label: "Zin 206: Schurk",
     predicateType: 'WG',
