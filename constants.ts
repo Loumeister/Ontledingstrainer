@@ -90,7 +90,7 @@ export const FEEDBACK_MATRIX: Record<string, Record<string, string>> = {
 };
 
 export const HINTS = {
-  MISSING_PV: "Tip: Zoek eerst de persoonsvorm. Maak de zin vragend of verander de tijd.",
+  MISSING_PV: "Tip: Zoek eerst de persoonsvorm. Gebruik de tijds- of getalsproef.",
   MISSING_OW: "Tip: Zoek het onderwerp. Vraag: Wie of wat + persoonsvorm?",
   MISSING_WG: "Tip: Maak het gezegde compleet. Welke andere werkwoorden staan er in de zin?",
   MISSING_NG: "Tip: Dit is een zin met een koppelwerkwoord. Zoek het Naamwoordelijk Gezegde (wat wordt er gezegd over het onderwerp?).",
@@ -160,7 +160,7 @@ export const SENTENCES: Sentence[] = [
     tokens: [
       { id: "s4t1", text: "De", role: "ow" },
       { id: "s4t2", text: "bakker,", role: "ow" },
-      { id: "s4t3", text: "mijn", role: "bijst" },
+      { id: "s4t3", text: "mijn", role: "bijst", subRole: "bijv_bep" },
       { id: "s4t4", text: "oom", role: "bijst" },
       { id: "s4t5", text: "Kees,", role: "bijst" },
       { id: "s4t6", text: "maakt", role: "pv" },
@@ -326,7 +326,7 @@ export const SENTENCES: Sentence[] = [
   {
     id: 16,
     label: "Zin 16: Spekglad",
-    predicateType: 'NG',
+    predicateType: 'WG',
     level: 2,
     tokens: [
       { id: "s16t1", text: "De", role: "ow" },
@@ -334,7 +334,7 @@ export const SENTENCES: Sentence[] = [
       { id: "s16t3", text: "maakt", role: "pv" },
       { id: "s16t4", text: "de", role: "lv" },
       { id: "s16t5", text: "straat", role: "lv" },
-      { id: "s16t6", text: "spekglad.", role: "nwd" }
+      { id: "s16t6", text: "spekglad.", role: "bwb" }
     ]
   },
   {
@@ -879,8 +879,8 @@ export const SENTENCES: Sentence[] = [
       { id: "s48t5", text: "ik", role: "ow" },
       { id: "s48t6", text: "iemand", role: "lv" },
       { id: "s48t7", text: "luid", role: "bwb", newChunk: true },
-      { id: "s48t8", text: "om", role: "vv" },
-      { id: "s48t9", text: "hulp", role: "vv" },
+      { id: "s48t8", text: "om", role: "bwb", newChunk: true },
+      { id: "s48t9", text: "hulp", role: "bwb" },
       { id: "s48t10", text: "roepen.", role: "wg" }
     ]
   },
@@ -902,23 +902,6 @@ export const SENTENCES: Sentence[] = [
       { id: "s49t10", text: "dan", role: "bwb", newChunk: true },
       { id: "s49t11", text: "vorig", role: "bwb" },
       { id: "s49t12", text: "jaar.", role: "bwb" }
-    ]
-  },
-  {
-    id: 50,
-    label: "Zin 50: Sollicitant",
-    predicateType: 'WG', // "werd ... geschikt bevonden" is passive WG with adjective.
-    level: 3,
-    tokens: [
-      { id: "s50t1", text: "De", role: "ow" },
-      { id: "s50t2", text: "sollicitant", role: "ow" },
-      { id: "s50t3", text: "werd", role: "pv" },
-      { id: "s50t4", text: "uiteindelijk", role: "bwb" },
-      { id: "s50t5", text: "geschikt", role: "nwd" }, // ng-deel
-      { id: "s50t6", text: "bevonden", role: "wg" },
-      { id: "s50t7", text: "voor", role: "bwb" },
-      { id: "s50t8", text: "de", role: "bwb" },
-      { id: "s50t9", text: "functie.", role: "bwb" }
     ]
   },
   {
@@ -958,23 +941,6 @@ export const SENTENCES: Sentence[] = [
     ]
   },
   {
-    id: 53,
-    label: "Zin 53: Belangrijke doorbraak",
-    predicateType: 'WG',
-    level: 3,
-    tokens: [
-      { id: "s53t1", text: "De", role: "ow" },
-      { id: "s53t2", text: "wetenschapper", role: "ow" },
-      { id: "s53t3", text: "beschouwt", role: "pv" },
-      { id: "s53t4", text: "dit", role: "lv" },
-      { id: "s53t5", text: "experiment", role: "lv" },
-      { id: "s53t6", text: "als", role: "vv" },
-      { id: "s53t7", text: "een", role: "vv" },
-      { id: "s53t8", text: "belangrijke", role: "vv", subRole: "bijv_bep" },
-      { id: "s53t9", text: "doorbraak.", role: "vv" }
-    ]
-  },
-  {
     id: 54,
     label: "Zin 54: Conditie verbeteren",
     predicateType: 'WG',
@@ -984,11 +950,10 @@ export const SENTENCES: Sentence[] = [
       { id: "s54t2", text: "probeer", role: "pv" },
       { id: "s54t3", text: "al", role: "bwb" },
       { id: "s54t4", text: "maanden", role: "bwb" },
-      { id: "s54t5", text: "om", role: "vv" },
-      { id: "s54t6", text: "mijn", role: "vv", subRole: "bijv_bep" },
-      { id: "s54t7", text: "conditie", role: "vv" },
-      { id: "s54t8", text: "te", role: "vv" },
-      { id: "s54t9", text: "verbeteren.", role: "vv" }
+      { id: "s54t5", text: "mijn", role: "lv", subRole: "bijv_bep" },
+      { id: "s54t6", text: "conditie", role: "lv" },
+      { id: "s54t7", text: "te", role: "wg" },
+      { id: "s54t8", text: "verbeteren.", role: "wg" }
     ]
   },
   {
@@ -1034,7 +999,7 @@ export const SENTENCES: Sentence[] = [
       { id: "s57t4", text: "vogelnesten", role: "ow" },
       { id: "s57t5", text: "blijft", role: "pv" },
       { id: "s57t6", text: "een", role: "nwd" },
-      { id: "s57t7", text: "moeilijke", role: "nwd" },
+      { id: "s57t7", text: "moeilijke", role: "nwd", subRole: "bijv_bep" },
       { id: "s57t8", text: "klus.", role: "nwd" }
     ]
   },
@@ -1050,7 +1015,7 @@ export const SENTENCES: Sentence[] = [
       { id: "s58t4", text: "dat", role: "lv", subRole: "bijv_bep" },
       { id: "s58t5", text: "schilderij", role: "lv" },
       { id: "s58t6", text: "in", role: "bwb" },
-      { id: "s58t7", text: "deze", role: "bwb" },
+      { id: "s58t7", text: "deze", role: "bwb", subRole: "bijv_bep" },
       { id: "s58t8", text: "brochure", role: "bwb" },
       { id: "s58t9", text: "als", role: "vv" },
       { id: "s58t10", text: "een", role: "vv" },
@@ -1069,9 +1034,9 @@ export const SENTENCES: Sentence[] = [
       { id: "s59t4", text: "probeerden", role: "pv" },
       { id: "s59t5", text: "het", role: "lv" },
       { id: "s59t6", text: "wifi-netwerk", role: "lv" },
-      { id: "s59t7", text: "bij", role: "vv" },
-      { id: "s59t8", text: "de", role: "vv" },
-      { id: "s59t9", text: "OPCW", role: "vv" },
+      { id: "s59t7", text: "bij", role: "lv", subRole: "bijv_bep" },
+      { id: "s59t8", text: "de", role: "lvv", subRole: "bijv_bep" },
+      { id: "s59t9", text: "OPCW", role: "lv", subRole: "bijv_bep" },
       { id: "s59t10", text: "te", role: "wg" },
       { id: "s59t11", text: "kraken.", role: "wg" }
     ]
@@ -1122,7 +1087,7 @@ export const SENTENCES: Sentence[] = [
       { id: "s62t4", text: "een", role: "ow", subRole: "bijv_bep" },
       { id: "s62t5", text: "sneeuwscooter", role: "ow", subRole: "bijv_bep" },
       { id: "s62t6", text: "gaven", role: "pv" },
-      { id: "s62t7", text: "vorige", role: "bwb" },
+      { id: "s62t7", text: "vorige", role: "bwb", subRole: "bijv_bep" },
       { id: "s62t8", text: "maand", role: "bwb" },
       { id: "s62t9", text: "uit", role: "bwb", newChunk: true },
       { id: "s62t10", text: "nood", role: "bwb" },
@@ -1176,7 +1141,7 @@ export const SENTENCES: Sentence[] = [
       { id: "s65t1", text: "Wij", role: "ow" },
       { id: "s65t2", text: "hopen", role: "pv" },
       { id: "s65t3", text: "op", role: "vv" },
-      { id: "s65t4", text: "een", role: "vv", subRole: "bijv_bep" },
+      { id: "s65t4", text: "een", role: "vv" },
       { id: "s65t5", text: "oplossing", role: "vv" },
       { id: "s65t6", text: "voor", role: "vv" },
       { id: "s65t7", text: "dit", role: "vv", subRole: "bijv_bep" },
@@ -1206,9 +1171,9 @@ export const SENTENCES: Sentence[] = [
     tokens: [
       { id: "s67t1", text: "De", role: "ow" },
       { id: "s67t2", text: "lucht", role: "ow" },
-      { id: "s67t3", text: "boven", role: "bwb" },
-      { id: "s67t4", text: "de", role: "bwb" },
-      { id: "s67t5", text: "stad", role: "bwb" },
+      { id: "s67t3", text: "boven", role: "ow", subRole: "bijv_bep" },
+      { id: "s67t4", text: "de", role: "ow", subRole: "bijv_bep" },
+      { id: "s67t5", text: "stad", role: "ow", subRole: "bijv_bep" },
       { id: "s67t6", text: "bleef", role: "pv" },
       { id: "s67t7", text: "de", role: "bwb" },
       { id: "s67t8", text: "hele", role: "bwb", subRole: "bijv_bep" },
@@ -1246,9 +1211,9 @@ export const SENTENCES: Sentence[] = [
       { id: "s69t4", text: "op", role: "vv" },
       { id: "s69t5", text: "beter", role: "vv", subRole: "bijv_bep" },
       { id: "s69t6", text: "licht", role: "vv" },
-      { id: "s69t7", text: "in", role: "bwb" },
-      { id: "s69t8", text: "de", role: "bwb" },
-      { id: "s69t9", text: "namiddag.", role: "bwb" }
+      { id: "s69t7", text: "in", role: "vv", subRole: "bijv_bep", newChunk: true },
+      { id: "s69t8", text: "de", role: "vv", subRole: "bijv_bep" },
+      { id: "s69t9", text: "namiddag.", role: "vv", subRole: "bijv_bep" }
     ]
   },
   {
@@ -1263,9 +1228,9 @@ export const SENTENCES: Sentence[] = [
       { id: "s70t4", text: "lijkt", role: "pv" },
       { id: "s70t5", text: "veel", role: "nwd", subRole: "bijv_bep" },
       { id: "s70t6", text: "efficiënter", role: "nwd" },
-      { id: "s70t7", text: "dan", role: "bwb" },
-      { id: "s70t8", text: "het", role: "bwb" },
-      { id: "s70t9", text: "oude.", role: "bwb" }
+      { id: "s70t7", text: "dan", role: "nwd" },
+      { id: "s70t8", text: "het", role: "nwd" },
+      { id: "s70t9", text: "oude.", role: "nwd" }
     ]
   },
   {
@@ -1336,10 +1301,10 @@ export const SENTENCES: Sentence[] = [
       { id: "s74t8", text: "na", role: "bwb" },
       { id: "s74t9", text: "de", role: "bwb" },
       { id: "s74t10", text: "pandemiejaren", role: "bwb" },
-      { id: "s74t11", text: "aanzienlijk", role: "nwd", subRole: "bijv_bep" },
+      { id: "s74t11", text: "aanzienlijk", role: "nwd" },
       { id: "s74t12", text: "slechter", role: "nwd" },
-      { id: "s74t13", text: "dan", role: "bwb" },
-      { id: "s74t14", text: "verwacht.", role: "bwb" }
+      { id: "s74t13", text: "dan", role: "nwd" },
+      { id: "s74t14", text: "verwacht.", role: "nwd" }
     ]
   },
   {
@@ -1359,7 +1324,7 @@ export const SENTENCES: Sentence[] = [
       { id: "s75t9", text: "problemen", role: "lv" },
       { id: "s75t10", text: "jarenlang", role: "bwb" },
       { id: "s75t11", text: "bewust", role: "bwb", newChunk: true },
-      { id: "s75t12", text: "onderbelicht", role: "wg" },
+      { id: "s75t12", text: "onderbelicht", role: "bwb", newChunk: true },
       { id: "s75t13", text: "gelaten.", role: "wg" }
     ]
   },
@@ -1372,13 +1337,13 @@ export const SENTENCES: Sentence[] = [
       { id: "s76t1", text: "De", role: "ow" },
       { id: "s76t2", text: "onderzoekers", role: "ow" },
       { id: "s76t3", text: "noemen", role: "pv" },
-      { id: "s76t4", text: "deze", role: "lv", subRole: "bijv_bep" }, // User called it LV, technically Obj1
+      { id: "s76t4", text: "deze", role: "lv" }, // User called it LV, technically Obj1
       { id: "s76t5", text: "onverwachte", role: "lv", subRole: "bijv_bep" },
       { id: "s76t6", text: "uitkomst", role: "lv" },
       { id: "s76t7", text: "in", role: "bwb" },
       { id: "s76t8", text: "hun", role: "bwb", subRole: "bijv_bep" },
       { id: "s76t9", text: "publicatie", role: "bwb" },
-      { id: "s76t10", text: "een", role: "bwb" }, // Treating as BWB/Predicative Adjunct to fit user schema of LV/MV
+      { id: "s76t10", text: "een", role: "bwb", newChunk: true }, // Treating as BWB/Predicative Adjunct to fit user schema of LV/MV
       { id: "s76t11", text: "belangrijke", role: "bwb", subRole: "bijv_bep" },
       { id: "s76t12", text: "kanteling", role: "bwb" },
       { id: "s76t13", text: "in", role: "bwb" },
@@ -1421,8 +1386,8 @@ export const SENTENCES: Sentence[] = [
       { id: "s78t8", text: "de", role: "bwb" },
       { id: "s78t9", text: "zware", role: "bwb", subRole: "bijv_bep" },
       { id: "s78t10", text: "kritiek", role: "bwb" },
-      { id: "s78t11", text: "politiek", role: "nwd", subRole: "bijv_bep" },
-      { id: "s78t12", text: "zeer", role: "nwd", subRole: "bijv_bep" },
+      { id: "s78t11", text: "politiek", role: "nwd" },
+      { id: "s78t12", text: "zeer", role: "nwd" },
       { id: "s78t13", text: "kwetsbaar.", role: "nwd" }
     ]
   },
@@ -1440,12 +1405,12 @@ export const SENTENCES: Sentence[] = [
       { id: "s79t6", text: "Kamerleden", role: "ow" },
       { id: "s79t7", text: "lastige", role: "lv", subRole: "bijv_bep" },
       { id: "s79t8", text: "vragen", role: "lv" },
-      { id: "s79t9", text: "over", role: "vv" },
-      { id: "s79t10", text: "de", role: "vv" },
-      { id: "s79t11", text: "financiering", role: "vv" },
-      { id: "s79t12", text: "van", role: "vv" },
-      { id: "s79t13", text: "het", role: "vv" },
-      { id: "s79t14", text: "plan.", role: "vv" }
+      { id: "s79t9", text: "over", role: "lv", subRole: "bijv_bep" },
+      { id: "s79t10", text: "de", role: "lv", subRole: "bijv_bep" },
+      { id: "s79t11", text: "financiering", role: "lv", subRole: "bijv_bep" },
+      { id: "s79t12", text: "van", role: "lv", subRole: "bijv_bep" },
+      { id: "s79t13", text: "het", role: "lv", subRole: "bijv_bep" },
+      { id: "s79t14", text: "plan.", role: "lv", subRole: "bijv_bep"  }
     ]
   },
   {
@@ -1463,7 +1428,7 @@ export const SENTENCES: Sentence[] = [
       { id: "s80t7", text: "reactie", role: "vv" },
       { id: "s80t8", text: "van", role: "vv" },
       { id: "s80t9", text: "de", role: "vv" },
-      { id: "s80t10", text: "betrokken", role: "vv" },
+      { id: "s80t10", text: "betrokken", role: "vv", subRole: "bijv_bep" },
       { id: "s80t11", text: "instanties.", role: "vv" }
     ]
   },
@@ -1503,9 +1468,9 @@ export const SENTENCES: Sentence[] = [
       { id: "s82t8", text: "de", role: "ow" },
       { id: "s82t9", text: "minister", role: "ow" },
       { id: "s82t10", text: "gisteren", role: "bwb" },
-      { id: "s82t11", text: "een", role: "lv", subRole: "bijv_bep" },
+      { id: "s82t11", text: "een", role: "lv" },
       { id: "s82t12", text: "aantal", role: "lv", subRole: "bijv_bep" },
-      { id: "s82t13", text: "kernbegrippen.", role: "lv", subRole: "bijv_bep" }
+      { id: "s82t13", text: "kernbegrippen.", role: "lv" }
     ]
   },
   {
@@ -1516,14 +1481,14 @@ export const SENTENCES: Sentence[] = [
     tokens: [
       { id: "s83t1", text: "De", role: "ow" },
       { id: "s83t2", text: "uitgangspunten", role: "ow" },
-      { id: "s83t3", text: "van", role: "ow" },
-      { id: "s83t4", text: "het", role: "ow" },
-      { id: "s83t5", text: "beleid", role: "ow" },
+      { id: "s83t3", text: "van", role: "ow", subRole: "bijv_bep" },
+      { id: "s83t4", text: "het", role: "ow", subRole: "bijv_bep" },
+      { id: "s83t5", text: "beleid", role: "ow", subRole: "bijv_bep" },
       { id: "s83t6", text: "lijken", role: "pv" },
       { id: "s83t7", text: "voor", role: "bwb" },
       { id: "s83t8", text: "veel", role: "bwb", subRole: "bijv_bep" },
       { id: "s83t9", text: "burgers", role: "bwb" },
-      { id: "s83t10", text: "onvoldoende", role: "nwd", subRole: "bijv_bep" },
+      { id: "s83t10", text: "onvoldoende", role: "nwd" },
       { id: "s83t11", text: "doordacht.", role: "nwd" }
     ]
   },
@@ -1537,8 +1502,8 @@ export const SENTENCES: Sentence[] = [
       { id: "s84t2", text: "opa", role: "ow" },
       { id: "s84t3", text: "is", role: "pv" },
       { id: "s84t4", text: "nog", role: "bwb" },
-      { id: "s84t5", text: "steeds", role: "bwb", newChunk: true },
-      { id: "s84t6", text: "erg", role: "nwd", subRole: "bijv_bep" },
+      { id: "s84t5", text: "steeds", role: "bwb" },
+      { id: "s84t6", text: "erg", role: "nwd" },
       { id: "s84t7", text: "fit.", role: "nwd" }
     ]
   },
@@ -1550,9 +1515,9 @@ export const SENTENCES: Sentence[] = [
     tokens: [
       { id: "s85t1", text: "De", role: "ow" },
       { id: "s85t2", text: "lucht", role: "ow" },
-      { id: "s85t3", text: "boven", role: "bwb" },
-      { id: "s85t4", text: "de", role: "bwb" },
-      { id: "s85t5", text: "stad", role: "bwb" },
+      { id: "s85t3", text: "boven", role: "bwb", subRole: "bijv_bep" },
+      { id: "s85t4", text: "de", role: "bwb", subRole: "bijv_bep" },
+      { id: "s85t5", text: "stad", role: "bwb", subRole: "bijv_bep" },
       { id: "s85t6", text: "bleef", role: "pv" },
       { id: "s85t7", text: "de", role: "bwb" },
       { id: "s85t8", text: "hele", role: "bwb", subRole: "bijv_bep" },
@@ -1602,14 +1567,14 @@ export const SENTENCES: Sentence[] = [
     tokens: [
       { id: "s88t1", text: "De", role: "ow" },
       { id: "s88t2", text: "sfeer", role: "ow" },
-      { id: "s88t3", text: "in", role: "bwb" },
-      { id: "s88t4", text: "de", role: "bwb" },
-      { id: "s88t5", text: "klas", role: "bwb" },
+      { id: "s88t3", text: "in", role: "ow" },
+      { id: "s88t4", text: "de", role: "ow" },
+      { id: "s88t5", text: "klas", role: "ow" },
       { id: "s88t6", text: "is", role: "pv" },
       { id: "s88t7", text: "de", role: "bwb" },
       { id: "s88t8", text: "laatste", role: "bwb", subRole: "bijv_bep" },
       { id: "s88t9", text: "weken", role: "bwb" },
-      { id: "s88t10", text: "behoorlijk", role: "nwd", subRole: "bijv_bep" },
+      { id: "s88t10", text: "behoorlijk", role: "nwd" },
       { id: "s88t11", text: "gespannen.", role: "nwd" }
     ]
   },
@@ -1624,7 +1589,7 @@ export const SENTENCES: Sentence[] = [
       { id: "s89t3", text: "blijft", role: "pv" },
       { id: "s89t4", text: "voor", role: "bwb" },
       { id: "s89t5", text: "mij", role: "bwb" },
-      { id: "s89t6", text: "nogal", role: "nwd", subRole: "bijv_bep" },
+      { id: "s89t6", text: "nogal", role: "nwd" },
       { id: "s89t7", text: "onduidelijk.", role: "nwd" }
     ]
   },
@@ -1641,7 +1606,7 @@ export const SENTENCES: Sentence[] = [
       { id: "s90t5", text: "voor", role: "bwb" },
       { id: "s90t6", text: "veel", role: "bwb", subRole: "bijv_bep" },
       { id: "s90t7", text: "mensen", role: "bwb" },
-      { id: "s90t8", text: "te", role: "nwd", subRole: "bijv_bep" },
+      { id: "s90t8", text: "te", role: "nwd" },
       { id: "s90t9", text: "ingewikkeld.", role: "nwd" }
     ]
   },
@@ -1669,11 +1634,11 @@ export const SENTENCES: Sentence[] = [
     tokens: [
       { id: "s92t1", text: "De", role: "ow" },
       { id: "s92t2", text: "resultaten", role: "ow" },
-      { id: "s92t3", text: "van", role: "ow" },
-      { id: "s92t4", text: "het", role: "ow" },
-      { id: "s92t5", text: "onderzoek", role: "ow" },
+      { id: "s92t3", text: "van", role: "ow", subRole: "bijv_bep" },
+      { id: "s92t4", text: "het", role: "ow", subRole: "bijv_bep" },
+      { id: "s92t5", text: "onderzoek", role: "ow", subRole: "bijv_bep" },
       { id: "s92t6", text: "blijken", role: "pv" },
-      { id: "s92t7", text: "verrassend", role: "nwd", subRole: "bijv_bep" },
+      { id: "s92t7", text: "verrassend", role: "nwd" },
       { id: "s92t8", text: "positief.", role: "nwd" }
     ]
   },
@@ -1702,15 +1667,15 @@ export const SENTENCES: Sentence[] = [
     tokens: [
       { id: "s94t1", text: "De", role: "ow" },
       { id: "s94t2", text: "sfeer", role: "ow" },
-      { id: "s94t3", text: "op", role: "bwb" },
-      { id: "s94t4", text: "het", role: "bwb" },
-      { id: "s94t5", text: "feest", role: "bwb" },
+      { id: "s94t3", text: "op", role: "ow", subRole: "bijv_bep" },
+      { id: "s94t4", text: "het", role: "ow", subRole: "bijv_bep" },
+      { id: "s94t5", text: "feest", role: "ow", subRole: "bijv_bep" },
       { id: "s94t6", text: "werd", role: "pv" },
       { id: "s94t7", text: "laat", role: "bwb" },
       { id: "s94t8", text: "op", role: "bwb" },
       { id: "s94t9", text: "de", role: "bwb" },
       { id: "s94t10", text: "avond", role: "bwb" },
-      { id: "s94t11", text: "steeds", role: "nwd", subRole: "bijv_bep" },
+      { id: "s94t11", text: "steeds", role: "nwd" },
       { id: "s94t12", text: "gezelliger.", role: "nwd" }
     ]
   },
@@ -1757,14 +1722,14 @@ export const SENTENCES: Sentence[] = [
     tokens: [
       { id: "s97t1", text: "De", role: "ow" },
       { id: "s97t2", text: "stemming", role: "ow" },
-      { id: "s97t3", text: "in", role: "ow" },
-      { id: "s97t4", text: "het", role: "ow" },
-      { id: "s97t5", text: "land", role: "ow" },
+      { id: "s97t3", text: "in", role: "ow", subRole: "bijv_bep" },
+      { id: "s97t4", text: "het", role: "ow", subRole: "bijv_bep" },
+      { id: "s97t5", text: "land", role: "ow", subRole: "bijv_bep" },
       { id: "s97t6", text: "blijft", role: "pv" },
       { id: "s97t7", text: "na", role: "bwb" },
       { id: "s97t8", text: "het", role: "bwb" },
       { id: "s97t9", text: "schandaal", role: "bwb" },
-      { id: "s97t10", text: "erg", role: "nwd", subRole: "bijv_bep" },
+      { id: "s97t10", text: "erg", role: "nwd" },
       { id: "s97t11", text: "somber.", role: "nwd" }
     ]
   },
@@ -1780,7 +1745,7 @@ export const SENTENCES: Sentence[] = [
       { id: "s98t4", text: "tijdens", role: "bwb" },
       { id: "s98t5", text: "het", role: "bwb" },
       { id: "s98t6", text: "gesprek", role: "bwb" },
-      { id: "s98t7", text: "bijzonder", role: "nwd", subRole: "bijv_bep" },
+      { id: "s98t7", text: "bijzonder", role: "nwd" },
       { id: "s98t8", text: "kwetsend.", role: "nwd" }
     ]
   },
@@ -1791,10 +1756,10 @@ export const SENTENCES: Sentence[] = [
     level: 2,
     tokens: [
       { id: "s99t1", text: "Lever", role: "pv" },
-      { id: "s99t2", text: "die", role: "lv", subRole: "bijv_bep" },
+      { id: "s99t2", text: "die", role: "lv" },
       { id: "s99t3", text: "opdracht", role: "lv" },
       { id: "s99t4", text: "uiterlijk", role: "bwb" },
-      { id: "s99t5", text: "morgen", role: "bwb", newChunk: true },
+      { id: "s99t5", text: "morgen", role: "bwb" },
       { id: "s99t6", text: "in.", role: "wg" }
     ]
   },
@@ -1805,7 +1770,7 @@ export const SENTENCES: Sentence[] = [
     level: 2,
     tokens: [
       { id: "s100t1", text: "Noteer", role: "pv" },
-      { id: "s100t2", text: "dat", role: "lv", subRole: "bijv_bep" },
+      { id: "s100t2", text: "dat", role: "lv" },
       { id: "s100t3", text: "telefoonnummer", role: "lv" },
       { id: "s100t4", text: "direct", role: "bwb" },
       { id: "s100t5", text: "in", role: "bwb", newChunk: true },
@@ -1837,7 +1802,7 @@ export const SENTENCES: Sentence[] = [
     tokens: [
       { id: "s102t1", text: "Geef", role: "pv" },
       { id: "s102t2", text: "me", role: "mv" },
-      { id: "s102t3", text: "dat", role: "lv", subRole: "bijv_bep" },
+      { id: "s102t3", text: "dat", role: "lv" },
       { id: "s102t4", text: "boek", role: "lv" },
       { id: "s102t5", text: "eens", role: "bwb" },
       { id: "s102t6", text: "aan.", role: "wg" }
@@ -1897,7 +1862,7 @@ export const SENTENCES: Sentence[] = [
       { id: "s106t4", text: "vreemde", role: "ow", subRole: "bijv_bep" },
       { id: "s106t5", text: "sfeer", role: "ow" },
       { id: "s106t6", text: "in", role: "bwb" },
-      { id: "s106t7", text: "dit", role: "bwb", subRole: "bijv_bep" },
+      { id: "s106t7", text: "dit", role: "bwb" },
       { id: "s106t8", text: "huis.", role: "bwb" }
     ]
   },
@@ -1913,7 +1878,7 @@ export const SENTENCES: Sentence[] = [
       { id: "s107t4", text: "belangrijke", role: "ow", subRole: "bijv_bep" },
       { id: "s107t5", text: "pagina's", role: "ow" },
       { id: "s107t6", text: "in", role: "bwb" },
-      { id: "s107t7", text: "dit", role: "bwb", subRole: "bijv_bep" },
+      { id: "s107t7", text: "dit", role: "bwb" },
       { id: "s107t8", text: "rapport.", role: "bwb" }
     ]
   },
@@ -1926,7 +1891,7 @@ export const SENTENCES: Sentence[] = [
       { id: "s108t1", text: "Er", role: "bwb" },
       { id: "s108t2", text: "schijnen", role: "pv" },
       { id: "s108t3", text: "in", role: "bwb" },
-      { id: "s108t4", text: "dit", role: "bwb", subRole: "bijv_bep" },
+      { id: "s108t4", text: "dit", role: "bwb" },
       { id: "s108t5", text: "gebied", role: "bwb" },
       { id: "s108t6", text: "wolven", role: "ow" },
       { id: "s108t7", text: "te", role: "wg" },
@@ -1985,7 +1950,7 @@ export const SENTENCES: Sentence[] = [
       { id: "s112t1", text: "Ik", role: "ow" },
       { id: "s112t2", text: "herinner", role: "pv" },
       { id: "s112t3", text: "me", role: "wg" },
-      { id: "s112t4", text: "dat", role: "lv", subRole: "bijv_bep" },
+      { id: "s112t4", text: "dat", role: "lv" },
       { id: "s112t5", text: "voorval", role: "lv" },
       { id: "s112t6", text: "nog", role: "bwb" },
       { id: "s112t7", text: "goed.", role: "bwb", newChunk: true }
@@ -1995,7 +1960,7 @@ export const SENTENCES: Sentence[] = [
     id: 114,
     label: "Zin 114: Dat geheim",
     predicateType: 'WG',
-    level: 2,
+    level: 1,
     tokens: [
       { id: "s114t1", text: "Dat", role: "lv", subRole: "bijv_bep" },
       { id: "s114t2", text: "geheim", role: "lv" },
@@ -2008,7 +1973,7 @@ export const SENTENCES: Sentence[] = [
     id: 115,
     label: "Zin 115: Veel lawaai",
     predicateType: 'WG',
-    level: 2,
+    level: 1,
     tokens: [
       { id: "s115t1", text: "Veel", role: "lv", subRole: "bijv_bep" },
       { id: "s115t2", text: "lawaai", role: "lv" },
@@ -2021,9 +1986,9 @@ export const SENTENCES: Sentence[] = [
     id: 116,
     label: "Zin 116: Die film",
     predicateType: 'WG',
-    level: 2,
+    level: 1,
     tokens: [
-      { id: "s116t1", text: "Die", role: "lv", subRole: "bijv_bep" },
+      { id: "s116t1", text: "Die", role: "lv" },
       { id: "s116t2", text: "film", role: "lv" },
       { id: "s116t3", text: "wil", role: "pv" },
       { id: "s116t4", text: "ik", role: "ow" },
@@ -2035,7 +2000,7 @@ export const SENTENCES: Sentence[] = [
     id: 117,
     label: "Zin 117: Jouw mening",
     predicateType: 'WG',
-    level: 2,
+    level: 1,
     tokens: [
       { id: "s117t1", text: "Jouw", role: "lv", subRole: "bijv_bep" },
       { id: "s117t2", text: "mening", role: "lv" },
@@ -2078,7 +2043,7 @@ export const SENTENCES: Sentence[] = [
     id: 120,
     label: "Zin 120: Terechtwijzen?",
     predicateType: 'WG',
-    level: 3,
+    level: 2,
     tokens: [
       { id: "s120t1", text: "Wijs", role: "pv" },
       { id: "s120t2", text: "jij", role: "ow" },
@@ -2127,8 +2092,8 @@ export const SENTENCES: Sentence[] = [
       { id: "s123t1", text: "Neem", role: "pv" },
       { id: "s123t2", text: "jij", role: "ow" },
       { id: "s123t3", text: "morgen", role: "bwb" },
-      { id: "s123t4", text: "iets", role: "lv" },
-      { id: "s123t5", text: "lekkers", role: "lv", subRole: "bijv_bep" },
+      { id: "s123t4", text: "iets", role: "lv", subRole: "bijv_bep" },
+      { id: "s123t5", text: "lekkers", role: "lv" },
       { id: "s123t6", text: "mee?", role: "wg" }
     ]
   },
@@ -2136,7 +2101,7 @@ export const SENTENCES: Sentence[] = [
     id: 124,
     label: "Zin 124: Soep serveren",
     predicateType: 'WG',
-    level: 2,
+    level: 1,
     tokens: [
       { id: "s124t1", text: "De", role: "ow" },
       { id: "s124t2", text: "ober", role: "ow" },
@@ -2166,9 +2131,9 @@ export const SENTENCES: Sentence[] = [
     id: 126,
     label: "Zin 126: Hoofdpijn",
     predicateType: 'WG',
-    level: 3,
+    level: 1,
     tokens: [
-      { id: "s126t1", text: "Die", role: "ow", subRole: "bijv_bep" },
+      { id: "s126t1", text: "Die", role: "ow" },
       { id: "s126t2", text: "grapjassen", role: "ow" },
       { id: "s126t3", text: "bezorgden", role: "pv" },
       { id: "s126t4", text: "de", role: "mv" },
@@ -2185,7 +2150,7 @@ export const SENTENCES: Sentence[] = [
       { id: "s127t1", text: "Ik", role: "ow" },
       { id: "s127t2", text: "gun", role: "pv" },
       { id: "s127t3", text: "jou", role: "mv" },
-      { id: "s127t4", text: "die", role: "lv", subRole: "bijv_bep" },
+      { id: "s127t4", text: "die", role: "lv" },
       { id: "s127t5", text: "eerste", role: "lv", subRole: "bijv_bep" },
       { id: "s127t6", text: "prijs", role: "lv" },
       { id: "s127t7", text: "van", role: "bwb" },
@@ -2196,7 +2161,7 @@ export const SENTENCES: Sentence[] = [
     id: 128,
     label: "Zin 128: Toegang weigeren",
     predicateType: 'WG',
-    level: 3,
+    level: 1,
     tokens: [
       { id: "s128t1", text: "Ze", role: "ow" },
       { id: "s128t2", text: "weigerde", role: "pv" },

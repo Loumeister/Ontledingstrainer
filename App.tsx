@@ -383,7 +383,7 @@ export default function App() {
              if (userLabel && FEEDBACK_MATRIX[userLabel] && FEEDBACK_MATRIX[userLabel][firstTokenRole]) {
                  chunkFeedback[idx] = FEEDBACK_MATRIX[userLabel][firstTokenRole];
              } else {
-                 const userRoleName = ROLES.find(r => r.key === userLabel)?.label || "Gekozen";
+                 const userRoleName = ROLES.find(r => r.key === userLabel)?.label || "door jou gekozen zinsdeel";
                  const correctRoleName = ROLES.find(r => r.key === firstTokenRole)?.label || "Juiste";
                  chunkFeedback[idx] = `Dit is niet het ${userRoleName}, maar het ${correctRoleName}.`;
              }
