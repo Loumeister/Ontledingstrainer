@@ -488,11 +488,11 @@ export const SENTENCES: Sentence[] = [
     tokens: [
       { id: "s21t1", text: "Weet", role: "pv" },
       { id: "s21t2", text: "jij", role: "ow" },
-      { id: "s21t3", text: "waarom", role: "lv" },
-      { id: "s21t4", text: "hij", role: "lv" },
-      { id: "s21t5", text: "zo", role: "lv" },
-      { id: "s21t6", text: "boos", role: "lv" },
-      { id: "s21t7", text: "is?", role: "lv" }
+      { id: "s21t3", text: "waarom", role: "bijzin" },
+      { id: "s21t4", text: "hij", role: "bijzin" },
+      { id: "s21t5", text: "zo", role: "bijzin" },
+      { id: "s21t6", text: "boos", role: "bijzin" },
+      { id: "s21t7", text: "is?", role: "bijzin" }
     ]
   },
   {
