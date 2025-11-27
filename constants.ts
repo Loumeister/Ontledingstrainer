@@ -1035,7 +1035,7 @@ export const SENTENCES: Sentence[] = [
       { id: "s59t5", text: "het", role: "lv" },
       { id: "s59t6", text: "wifi-netwerk", role: "lv" },
       { id: "s59t7", text: "bij", role: "lv", subRole: "bijv_bep" },
-      { id: "s59t8", text: "de", role: "lvv", subRole: "bijv_bep" },
+      { id: "s59t8", text: "de", role: "lv", subRole: "bijv_bep" },
       { id: "s59t9", text: "OPCW", role: "lv", subRole: "bijv_bep" },
       { id: "s59t10", text: "te", role: "wg" },
       { id: "s59t11", text: "kraken.", role: "wg" }

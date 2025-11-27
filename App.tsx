@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { SENTENCES, ROLES, FEEDBACK_MATRIX, FEEDBACK_STRUCTURE, HINTS } from './constants';
 import { Sentence, PlacementMap, RoleKey, Token, RoleDefinition, DifficultyLevel, ValidationState } from './types';
 import { DraggableRole } from './components/WordChip';
@@ -30,7 +30,7 @@ export default function App() {
   const [includeBijst, setIncludeBijst] = useState(false);
   const [includeBB, setIncludeBB] = useState(false);
   // includeVV is removed from UI, effectively always false unless we rely on level logic
-  const [includeVV, setIncludeVV] = useState(false); 
+  const [includeVV] = useState(false); 
   
   // New Configuration: Level & Count
   const [selectedLevel, setSelectedLevel] = useState<DifficultyLevel | null>(null); // null = all
@@ -77,6 +77,9 @@ export default function App() {
 
       // --- GATEKEEPER 1: Compound Sentences ---
       // Compound sentences are ONLY shown if explicitly checked.
+      // If checked, they are INCLUDED. If only compound is checked (and no other focus), show ONLY compound.
+      
+      // If compound checkbox is OFF, hide all level 4 sentences
       if (isCompound && !focusBijzin) return false;
 
       // 1. Predicate Type Filter (Applies to all)
@@ -119,6 +122,10 @@ export default function App() {
       // 4. Level Filter (Excludes Level 4 from standard 1-3 selection)
       if (selectedLevel !== null) {
           if (s.level !== selectedLevel) return false;
+      } else {
+          // If "Alles" (null) is selected, we typically show 1-3. 
+          // Level 4 is only included if focusBijzin is true (handled at Gatekeeper 1)
+          if (s.level === 4 && !focusBijzin) return false;
       }
 
       return true;
@@ -383,7 +390,7 @@ export default function App() {
              if (userLabel && FEEDBACK_MATRIX[userLabel] && FEEDBACK_MATRIX[userLabel][firstTokenRole]) {
                  chunkFeedback[idx] = FEEDBACK_MATRIX[userLabel][firstTokenRole];
              } else {
-                 const userRoleName = ROLES.find(r => r.key === userLabel)?.label || "door jou gekozen zinsdeel";
+                 const userRoleName = ROLES.find(r => r.key === userLabel)?.label || "Gekozen";
                  const correctRoleName = ROLES.find(r => r.key === firstTokenRole)?.label || "Juiste";
                  chunkFeedback[idx] = `Dit is niet het ${userRoleName}, maar het ${correctRoleName}.`;
              }
@@ -563,6 +570,12 @@ export default function App() {
                                     <span className="font-bold text-sm">Allebei (Mix)</span>
                                 </label>
                            </div>
+                           <div className="mt-3 pt-3 border-t border-slate-100">
+                                <label className="flex items-center justify-between p-3 rounded-lg border border-blue-100 bg-blue-50 hover:bg-blue-100 cursor-pointer">
+                                    <span className="font-bold text-blue-900 block text-sm">Samengestelde zinnen (hoofd- en bijzin)</span>
+                                    <input type="checkbox" className="w-5 h-5 text-blue-600 rounded" checked={focusBijzin} onChange={(e) => setFocusBijzin(e.target.checked)} />
+                                </label>
+                           </div>
                         </div>
                     </div>
 
@@ -585,11 +598,6 @@ export default function App() {
                                 <label className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
                                     <span className="font-bold text-slate-700 block text-sm">Voorzetselvoorwerp</span>
                                     <input type="checkbox" className="w-5 h-5 text-blue-600 rounded" checked={focusVV} onChange={(e) => setFocusVV(e.target.checked)} />
-                                </label>
-
-                                <label className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
-                                    <span className="font-bold text-slate-700 block text-sm">Samengestelde zinnen (hoofd- en bijzin)</span>
-                                    <input type="checkbox" className="w-5 h-5 text-blue-600 rounded" checked={focusBijzin} onChange={(e) => setFocusBijzin(e.target.checked)} />
                                 </label>
                             </div>
                         </div>
