@@ -1,3 +1,4 @@
+
 import { RoleDefinition, Sentence } from './types';
 
 export const ROLES: RoleDefinition[] = [
@@ -348,9 +349,9 @@ export const SENTENCES: Sentence[] = [
       { id: "s17t4", text: "een", role: "vv" },
       { id: "s17t5", text: "rustig", role: "vv", subRole: "bijv_bep" },
       { id: "s17t6", text: "hotel", role: "vv" },
-      { id: "s17t7", text: "aan", role: "vv" },
-      { id: "s17t8", text: "het", role: "vv" },
-      { id: "s17t9", text: "strand.", role: "vv" }
+      { id: "s17t7", text: "aan", role: "bwb" },
+      { id: "s17t8", text: "het", role: "bwb" },
+      { id: "s17t9", text: "strand.", role: "bwb" }
     ]
   },
   {
@@ -402,17 +403,17 @@ export const SENTENCES: Sentence[] = [
   },
   {
     id: 21,
-    label: "Zin 21: Jij vroeg mij...",
+    label: "Zin 21: Weet jij...",
     predicateType: 'WG',
-    level: 2,
+    level: 1,
     tokens: [
-      { id: "s21t1", text: "Jij", role: "ow" },
-      { id: "s21t2", text: "vroeg", role: "pv" },
-      { id: "s21t3", text: "mij", role: "mv" },
-      { id: "s21t4", text: "toch", role: "bwb" },
-      { id: "s21t5", text: "naar", role: "vv" },
-      { id: "s21t6", text: "de", role: "vv" },
-      { id: "s21t7", text: "weg?", role: "vv" }
+      { id: "s21t1", text: "Weet", role: "pv" },
+      { id: "s21t2", text: "jij", role: "ow" },
+      { id: "s21t3", text: "waarom", role: "lv" },
+      { id: "s21t4", text: "hij", role: "lv" },
+      { id: "s21t5", text: "zo", role: "lv" },
+      { id: "s21t6", text: "boos", role: "lv" },
+      { id: "s21t7", text: "is?", role: "lv" }
     ]
   },
   {
@@ -766,7 +767,7 @@ export const SENTENCES: Sentence[] = [
       { id: "s42t2", text: "vinden", role: "pv" },
       { id: "s42t3", text: "het", role: "lv" },
       { id: "s42t4", text: "soms", role: "bwb" },
-      { id: "s42t5", text: "lastig", role: "nwd" },
+      { id: "s42t5", text: "lastig", role: "nwd" }, // User specified 'ng-deel'
       { id: "s42t6", text: "om", role: "vv" },
       { id: "s42t7", text: "iedereen", role: "vv" },
       { id: "s42t8", text: "tegelijk", role: "vv", subRole: "bijv_bep" },
@@ -906,16 +907,16 @@ export const SENTENCES: Sentence[] = [
   {
     id: 50,
     label: "Zin 50: Sollicitant",
-    predicateType: 'WG',
+    predicateType: 'WG', // "werd ... geschikt bevonden" is passive WG with adjective.
     level: 3,
     tokens: [
       { id: "s50t1", text: "De", role: "ow" },
       { id: "s50t2", text: "sollicitant", role: "ow" },
       { id: "s50t3", text: "werd", role: "pv" },
       { id: "s50t4", text: "uiteindelijk", role: "bwb" },
-      { id: "s50t5", text: "geschikt", role: "nwd" },
+      { id: "s50t5", text: "geschikt", role: "nwd" }, // ng-deel
       { id: "s50t6", text: "bevonden", role: "wg" },
-      { id: "s50t7", text: "voor", role: "bwb", newChunk: true },
+      { id: "s50t7", text: "voor", role: "bwb" },
       { id: "s50t8", text: "de", role: "bwb" },
       { id: "s50t9", text: "functie.", role: "bwb" }
     ]
@@ -1332,7 +1333,7 @@ export const SENTENCES: Sentence[] = [
       { id: "s74t5", text: "blijkt", role: "pv" },
       { id: "s74t6", text: "de", role: "ow" },
       { id: "s74t7", text: "luchtkwaliteit", role: "ow" },
-      { id: "s74t8", text: "na", role: "bwb", newChunk: true },
+      { id: "s74t8", text: "na", role: "bwb" },
       { id: "s74t9", text: "de", role: "bwb" },
       { id: "s74t10", text: "pandemiejaren", role: "bwb" },
       { id: "s74t11", text: "aanzienlijk", role: "nwd", subRole: "bijv_bep" },
@@ -1371,13 +1372,13 @@ export const SENTENCES: Sentence[] = [
       { id: "s76t1", text: "De", role: "ow" },
       { id: "s76t2", text: "onderzoekers", role: "ow" },
       { id: "s76t3", text: "noemen", role: "pv" },
-      { id: "s76t4", text: "deze", role: "lv", subRole: "bijv_bep" },
+      { id: "s76t4", text: "deze", role: "lv", subRole: "bijv_bep" }, // User called it LV, technically Obj1
       { id: "s76t5", text: "onverwachte", role: "lv", subRole: "bijv_bep" },
       { id: "s76t6", text: "uitkomst", role: "lv" },
       { id: "s76t7", text: "in", role: "bwb" },
       { id: "s76t8", text: "hun", role: "bwb", subRole: "bijv_bep" },
       { id: "s76t9", text: "publicatie", role: "bwb" },
-      { id: "s76t10", text: "een", role: "bwb" },
+      { id: "s76t10", text: "een", role: "bwb" }, // Treating as BWB/Predicative Adjunct to fit user schema of LV/MV
       { id: "s76t11", text: "belangrijke", role: "bwb", subRole: "bijv_bep" },
       { id: "s76t12", text: "kanteling", role: "bwb" },
       { id: "s76t13", text: "in", role: "bwb" },
@@ -1783,7 +1784,7 @@ export const SENTENCES: Sentence[] = [
       { id: "s98t8", text: "kwetsend.", role: "nwd" }
     ]
   },
-    {
+  {
     id: 99,
     label: "Zin 99: Lever in",
     predicateType: 'WG',
@@ -1854,8 +1855,6 @@ export const SENTENCES: Sentence[] = [
       { id: "s103t4", text: "stil.", role: "nwd" }
     ]
   },
-
-  // 2. ZINNEN MET 'ER' (Plaatsvervangend OND)
   {
     id: 104,
     label: "Zin 104: Twee duiven",
@@ -1934,8 +1933,6 @@ export const SENTENCES: Sentence[] = [
       { id: "s108t8", text: "leven.", role: "wg" }
     ]
   },
-
-  // 3. WEDERKERENDE WERKWOORDEN (Zich)
   {
     id: 109,
     label: "Zin 109: Verheugen (WG)",
@@ -1994,8 +1991,6 @@ export const SENTENCES: Sentence[] = [
       { id: "s112t7", text: "goed.", role: "bwb", newChunk: true }
     ]
   },
-
-  // 4. TOPICALISATIE (LV Vooraan)
   {
     id: 114,
     label: "Zin 114: Dat geheim",
@@ -2065,8 +2060,6 @@ export const SENTENCES: Sentence[] = [
       { id: "s118t8", text: "gemaakt.", role: "wg" }
     ]
   },
-
-  // 5. SCHEIDBARE WW IN VRAAGZIN (PV ... WG)
   {
     id: 119,
     label: "Zin 119: Opruimen?",
@@ -2139,8 +2132,6 @@ export const SENTENCES: Sentence[] = [
       { id: "s123t6", text: "mee?", role: "wg" }
     ]
   },
-
-  // 6. 'KAAN'-ZINNEN (MV zonder voorzetsel)
   {
     id: 124,
     label: "Zin 124: Soep serveren",
@@ -2214,13 +2205,11 @@ export const SENTENCES: Sentence[] = [
       { id: "s128t5", text: "toegang.", role: "lv" }
     ]
   },
-
-  // --- NEW COMPOUND SENTENCES (Opgave C) ---
   {
     id: 201,
     label: "Zin 201: Thuiswerken",
     predicateType: 'WG',
-    level: 3,
+    level: 4,
     tokens: [
       { id: "c1t1", text: "Omdat", role: "bijzin", subRole: "vw_onder" },
       { id: "c1t2", text: "ik", role: "bijzin" },
@@ -2236,7 +2225,7 @@ export const SENTENCES: Sentence[] = [
     id: 202,
     label: "Zin 202: Beroemde zanger",
     predicateType: 'WG',
-    level: 3,
+    level: 4,
     tokens: [
       { id: "c2t1", text: "De", role: "ow" },
       { id: "c2t2", text: "beroemde", role: "ow", subRole: "bijv_bep" },
@@ -2257,7 +2246,7 @@ export const SENTENCES: Sentence[] = [
     id: 203,
     label: "Zin 203: In de war (Nevenschikking)",
     predicateType: 'NG',
-    level: 3,
+    level: 4,
     tokens: [
       { id: "c3t1", text: "Ik", role: "ow" },
       { id: "c3t2", text: "ben", role: "pv" },
@@ -2276,7 +2265,7 @@ export const SENTENCES: Sentence[] = [
     id: 204,
     label: "Zin 204: Max piloot (Nevenschikking)",
     predicateType: 'NG',
-    level: 3,
+    level: 4,
     tokens: [
       { id: "c4t1", text: "Sinds", role: "bwb" },
       { id: "c4t2", text: "vorig", role: "bwb", subRole: "bijv_bep" },
@@ -2295,10 +2284,28 @@ export const SENTENCES: Sentence[] = [
     ]
   },
   {
+    id: 205,
+    label: "Zin 205: Schoonmoeder",
+    predicateType: 'NG',
+    level: 4,
+    tokens: [
+      { id: "c5t1", text: "Mijn", role: "ow", subRole: "bijv_bep" },
+      { id: "c5t2", text: "schoonmoeder", role: "ow" },
+      { id: "c5t3", text: "is", role: "pv" },
+      { id: "c5t4", text: "zeer", role: "nwd", subRole: "bijv_bep" },
+      { id: "c5t5", text: "goedgelovig,", role: "nwd" },
+      { id: "c5t6", text: "daardoor", role: "bijzin", subRole: "vw_onder" }, // Voegwoordelijk bijwoord, fungeert als verbinding
+      { id: "c5t7", text: "wordt", role: "bijzin" },
+      { id: "c5t8", text: "zij", role: "bijzin" },
+      { id: "c5t9", text: "vaak", role: "bijzin" },
+      { id: "c5t10", text: "bedrogen.", role: "bijzin" }
+    ]
+  },
+  {
     id: 206,
     label: "Zin 206: Schurk",
     predicateType: 'WG',
-    level: 3,
+    level: 4,
     tokens: [
       { id: "c6t1", text: "Terwijl", role: "bijzin", subRole: "vw_onder" },
       { id: "c6t2", text: "zij", role: "bijzin" },
@@ -2318,7 +2325,7 @@ export const SENTENCES: Sentence[] = [
     id: 207,
     label: "Zin 207: Sleutel kwijt (Nevenschikking)",
     predicateType: 'WG',
-    level: 3,
+    level: 4,
     tokens: [
       { id: "c7t1", text: "Ik", role: "ow" },
       { id: "c7t2", text: "had", role: "pv" },
@@ -2329,7 +2336,7 @@ export const SENTENCES: Sentence[] = [
       { id: "c7t7", text: "was", role: "pv" },
       { id: "c7t8", text: "mijn", role: "lv", subRole: "bijv_bep" },
       { id: "c7t9", text: "sleutel", role: "lv" },
-      { id: "c7t10", text: "verloren", role: "wg" }, // 'verloren' is deel van WG 'kwijt zijn'
+      { id: "c7t10", text: "kwijt", role: "wg" }, // 'kwijt' is deel van WG 'kwijt zijn'
       { id: "c7t11", text: "waardoor", role: "bijzin", subRole: "vw_onder" },
       { id: "c7t12", text: "ik", role: "bijzin" },
       { id: "c7t13", text: "niet", role: "bijzin" },
@@ -2341,7 +2348,7 @@ export const SENTENCES: Sentence[] = [
     id: 208,
     label: "Zin 208: Reis Azië",
     predicateType: 'WG',
-    level: 3,
+    level: 4,
     tokens: [
       { id: "c8t1", text: "Toen", role: "bijzin", subRole: "vw_onder" },
       { id: "c8t2", text: "ik", role: "bijzin" },
@@ -2362,7 +2369,7 @@ export const SENTENCES: Sentence[] = [
     id: 209,
     label: "Zin 209: Groen drankje (Nevenschikking)",
     predicateType: 'WG',
-    level: 3,
+    level: 4,
     tokens: [
       { id: "c9t1", text: "Hij", role: "ow" },
       { id: "c9t2", text: "gaf", role: "pv" },
@@ -2380,7 +2387,7 @@ export const SENTENCES: Sentence[] = [
     id: 210,
     label: "Zin 210: Hamburgers of kip (Nevenschikking)",
     predicateType: 'WG',
-    level: 3,
+    level: 4,
     tokens: [
       { id: "c10t1", text: "Houd", role: "pv" },
       { id: "c10t2", text: "je", role: "ow" },

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { SENTENCES, ROLES, FEEDBACK_MATRIX, FEEDBACK_STRUCTURE, HINTS } from './constants';
 import { Sentence, PlacementMap, RoleKey, Token, RoleDefinition, DifficultyLevel, ValidationState } from './types';
@@ -23,12 +24,15 @@ export default function App() {
   const [focusLV, setFocusLV] = useState(false);
   const [focusMV, setFocusMV] = useState(false);
   const [focusVV, setFocusVV] = useState(false);
+  
+  // Compound Sentences Filter (This is now a primary filter, not just focus)
   const [focusBijzin, setFocusBijzin] = useState(false); 
 
   // Complexity Filters (Exclude complex parts if unchecked)
   const [includeBijst, setIncludeBijst] = useState(false);
   const [includeBB, setIncludeBB] = useState(false);
-  const [includeVV, setIncludeVV] = useState(false);
+  // includeVV is removed from UI, effectively always false unless we rely on level logic
+  const [includeVV, setIncludeVV] = useState(false); 
   
   // New Configuration: Level & Count
   const [selectedLevel, setSelectedLevel] = useState<DifficultyLevel | null>(null); // null = all
@@ -67,44 +71,54 @@ export default function App() {
 
   const getFilteredSentences = () => {
     return SENTENCES.filter(s => {
-      // 1. Predicate Type Filter
+      // Determine if sentence is compound (Level 4)
+      const isCompound = s.level === 4;
+
+      // --- GATEKEEPER 1: Compound Sentences ---
+      // Compound sentences are ONLY shown if explicitly checked.
+      if (isCompound && !focusBijzin) return false;
+
+      // 1. Predicate Type Filter (Applies to all)
       if (predicateMode === 'WG' && s.predicateType !== 'WG') return false;
       if (predicateMode === 'NG' && s.predicateType !== 'NG') return false;
       
       // 2. Focus Filters (OR Logic)
-      const focusFiltersActive = focusLV || focusMV || focusVV || focusBijzin;
+      const specificFocusActive = focusLV || focusMV || focusVV;
       
-      if (focusFiltersActive) {
+      if (specificFocusActive) {
         const matchesFocus = (
             (focusLV && s.tokens.some(t => t.role === 'lv')) ||
             (focusMV && s.tokens.some(t => t.role === 'mv')) ||
             (focusVV && s.tokens.some(t => t.role === 'vv')) ||
-            // For compound sentences, we look for either a subordinate clause ('bijzin') OR a coordinating conjunction ('vw_neven')
-            (focusBijzin && s.tokens.some(t => t.role === 'bijzin' || t.role === 'vw_neven'))
+            (focusBijzin && isCompound) // If compound is selected, it matches the "focus" criteria
         );
         if (!matchesFocus) return false;
+      } else if (focusBijzin) {
+         // If ONLY focusBijzin is checked, show ONLY compound sentences
+         if (!isCompound) return false;
       }
-      
-      // Identify if this sentence is a target of the "Samengestelde Zinnen" focus
-      const isCompoundTarget = focusBijzin && s.tokens.some(t => t.role === 'bijzin' || t.role === 'vw_neven');
 
-      // 3. Complexity Filters based on Level
-      const isLevelHighOrAll = selectedLevel === 3 || selectedLevel === 4 || selectedLevel === null;
+      // 3. Complexity Filters based on Level (Only for non-compound)
+      // Level 4 is effectively "Expert", so standard complexity filters don't really apply.
+      
+      const isLevelHighOrAll = selectedLevel === 3 || selectedLevel === null;
       const isLevelMid = selectedLevel === 2;
       const isLevelLow = selectedLevel === 1;
 
-      // Filter Bijstelling: Exclude if (Low or Mid) AND not checked AND not a specific target
-      if (!isLevelHighOrAll && !includeBijst && !isCompoundTarget && s.tokens.some(t => t.role === 'bijst')) {
+      // Filter Bijstelling: Exclude if (Low or Mid) AND not checked
+      if (!isCompound && !isLevelHighOrAll && !includeBijst && s.tokens.some(t => t.role === 'bijst')) {
           return false;
       }
       
-      // Filter VV: Exclude if (Low) AND not checked AND not focused/target
-      if (isLevelLow && !includeVV && !focusVV && !isCompoundTarget && s.tokens.some(t => t.role === 'vv')) {
+      // Filter VV: Exclude if (Low) AND not checked AND not focused
+      if (!isCompound && isLevelLow && !includeVV && !focusVV && s.tokens.some(t => t.role === 'vv')) {
           return false;
       }
       
-      // 4. Level Filter
-      if (selectedLevel !== null && s.level !== selectedLevel) return false;
+      // 4. Level Filter (Excludes Level 4 from standard 1-3 selection)
+      if (selectedLevel !== null) {
+          if (s.level !== selectedLevel) return false;
+      }
 
       return true;
     });
@@ -113,7 +127,7 @@ export default function App() {
   const startSession = () => {
     const pool = getFilteredSentences();
     if (pool.length === 0) {
-      alert("Geen zinnen beschikbaar met de huidige filters. Probeer minder filters te selecteren.");
+      alert("Geen zinnen beschikbaar met de huidige filters. Probeer minder filters te selecteren of vink 'Samengestelde zinnen' aan.");
       return;
     }
     const shuffled = [...pool].sort(() => 0.5 - Math.random());
@@ -504,7 +518,7 @@ export default function App() {
                         <div>
                            <h3 className="font-bold text-slate-700 mb-2">Moeilijkheidsgraad</h3>
                            <div className="flex gap-2">
-                              {[null, 1, 2, 3, 4].map((lvl) => (
+                              {[null, 1, 2, 3].map((lvl) => (
                                 <button 
                                   key={lvl || 'all'}
                                   onClick={() => setSelectedLevel(lvl as DifficultyLevel)}
@@ -514,14 +528,19 @@ export default function App() {
                                       : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}
                                   `}
                                 >
-                                  {lvl === null ? 'Alles' : lvl === 1 ? 'Basis' : lvl === 2 ? 'Middel' : lvl === 3 ? 'Hoog' : 'Expert'}
+                                  {lvl === null ? 'Alles' : lvl === 1 ? 'Basis' : lvl === 2 ? 'Middel' : 'Hoog'}
                                 </button>
                               ))}
                            </div>
                         </div>
                         <div>
                            <h3 className="font-bold text-slate-700 mb-2">Soort Zinnen & Gezegde</h3>
-                           <div className="flex flex-col gap-2">
+                           <div className="flex flex-col gap-3">
+                                <label className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-all ${focusBijzin ? 'bg-purple-50 border-purple-500 text-purple-900' : 'hover:bg-slate-50 border-slate-200'}`}>
+                                    <span className="font-bold text-sm">Samengestelde zinnen (hoofd- en bijzin)</span>
+                                    <input type="checkbox" className="w-5 h-5 text-purple-600 rounded" checked={focusBijzin} onChange={(e) => setFocusBijzin(e.target.checked)} />
+                                </label>
+                                <div className="h-[1px] bg-slate-200 my-1"></div>
                                 <label className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-all ${predicateMode === 'WG' ? 'bg-blue-50 border-blue-500 text-blue-800' : 'hover:bg-slate-50 border-slate-200'}`}>
                                     <input type="radio" name="pred" className="w-4 h-4 text-blue-600" checked={predicateMode === 'WG'} onChange={() => setPredicateMode('WG')} />
                                     <span className="font-bold text-sm">Alleen Werkwoordelijk (WG)</span>
@@ -557,11 +576,6 @@ export default function App() {
                                 <label className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
                                     <span className="font-bold text-slate-700 block text-sm">Voorzetselvoorwerp</span>
                                     <input type="checkbox" className="w-5 h-5 text-blue-600 rounded" checked={focusVV} onChange={(e) => setFocusVV(e.target.checked)} />
-                                </label>
-
-                                <label className="flex items-center justify-between p-3 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
-                                    <span className="font-bold text-slate-700 block text-sm">Samengestelde zinnen (hoofd- en bijzin)</span>
-                                    <input type="checkbox" className="w-5 h-5 text-blue-600 rounded" checked={focusBijzin} onChange={(e) => setFocusBijzin(e.target.checked)} />
                                 </label>
                             </div>
                         </div>
