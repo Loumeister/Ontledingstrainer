@@ -155,8 +155,6 @@ export default function App() {
       
       if (selectedLevel !== null) {
           if (s.level !== selectedLevel) return false;
-      } else {
-          if (s.level === 4 && !focusBijzin) return false;
       }
 
       return true;
@@ -380,7 +378,7 @@ export default function App() {
              } else {
                  const userRoleName = ROLES.find(r => r.key === userLabel)?.label || "Gekozen";
                  const correctRoleName = ROLES.find(r => r.key === firstTokenRole)?.label || "Juiste";
-                 chunkFeedback[idx] = `Dit is niet het ${userRoleName}, maar het ${correctRoleName}.`;
+                 chunkFeedback[idx] = `Dit is niet ${userRoleName}, maar het ${correctRoleName}.`;
              }
              const roleName = ROLES.find(r => r.key === firstTokenRole)?.label || firstTokenRole;
              currentMistakes[roleName] = (currentMistakes[roleName] || 0) + 1;
@@ -768,14 +766,38 @@ export default function App() {
                       <div className="flex flex-col gap-2 md:gap-4">
                         <div>
                            <p className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2">Zinsdelen & Gezegde:</p>
-                           <div className="flex flex-wrap gap-2">
-                            {ROLES.filter(r => !r.isSubOnly)
-                                  .filter(r => (includeVV || focusVV || selectedLevel === 2 || selectedLevel === 3 || selectedLevel === 4 || selectedLevel === null || (currentSentence && currentSentence.tokens.some(t => t.role === 'vv'))) || r.key !== 'vv')
-                                  .filter(r => r.key !== 'bijzin' || focusBijzin || selectedLevel === 3 || selectedLevel === 4 || selectedLevel === null || (currentSentence && currentSentence.tokens.some(t => t.role === 'bijzin')))
-                                  .filter(r => r.key !== 'vw_neven' || focusBijzin || selectedLevel === 3 || selectedLevel === 4 || selectedLevel === null || (currentSentence && currentSentence.tokens.some(t => t.role === 'vw_neven')))
-                                  .map(role => (
-                              <DraggableRole key={role.key} role={role} onDragStart={handleDragStart} isLargeFont={largeFont} />
-                            ))}
+                           <div className="flex flex-wrap gap-2 justify-center">
+                             {/* First row: Main syntactic roles (PV, OW, LV, MV, BWB, VV) */}
+                             {ROLES.filter(r => !r.isSubOnly && !['wg', 'nwd', 'bijzin', 'vw_neven', 'bijst'].includes(r.key as string))
+                                   .filter(r => (includeVV || focusVV || selectedLevel === 2 || selectedLevel === 3 || selectedLevel === 4 || selectedLevel === null || (currentSentence && currentSentence.tokens.some(t => t.role === 'vv'))) || r.key !== 'vv')
+                                   .map(role => (
+                               <DraggableRole key={role.key} role={role} onDragStart={handleDragStart} isLargeFont={largeFont} />
+                             ))}
+                             
+                             {/* New line after first row */}
+                             <div className="w-full" />
+                             
+                             {/* WG, NG group - close together */}
+                             {ROLES.filter(r => !r.isSubOnly && ['wg', 'nwd'].includes(r.key as string))
+                                   .map(role => (
+                               <DraggableRole key={role.key} role={role} onDragStart={handleDragStart} isLargeFont={largeFont} />
+                             ))}
+                             
+                             {/* Bijzin, VW_Neven group - close together with larger gap from WG/NG */}
+                             <div className="w-6" />
+                             {ROLES.filter(r => !r.isSubOnly && ['bijzin', 'vw_neven'].includes(r.key as string))
+                                   .filter(r => r.key !== 'bijzin' || focusBijzin || selectedLevel === 3 || selectedLevel === 4 || selectedLevel === null || (currentSentence && currentSentence.tokens.some(t => t.role === 'bijzin')))
+                                   .filter(r => r.key !== 'vw_neven' || focusBijzin || selectedLevel === 3 || selectedLevel === 4 || selectedLevel === null || (currentSentence && currentSentence.tokens.some(t => t.role === 'vw_neven')))
+                                   .map(role => (
+                               <DraggableRole key={role.key} role={role} onDragStart={handleDragStart} isLargeFont={largeFont} />
+                             ))}
+                             
+                             {/* Bijstelling - small tab indent */}
+                             <div className="w-3" />
+                             {ROLES.filter(r => !r.isSubOnly && r.key === 'bijst')
+                                   .map(role => (
+                               <DraggableRole key={role.key} role={role} onDragStart={handleDragStart} isLargeFont={largeFont} />
+                             ))}
                            </div>
                         </div>
                         {includeBB && (

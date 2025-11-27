@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Token, RoleDefinition, ValidationState } from '../types';
 
 interface SentenceChunkProps {
@@ -34,6 +34,12 @@ export const SentenceChunk: React.FC<SentenceChunkProps> = ({
 }) => {
   const [isOverChunk, setIsOverChunk] = useState(false);
   const [hoveredWordId, setHoveredWordId] = useState<string | null>(null);
+  const [dismissedFeedback, setDismissedFeedback] = useState(false);
+
+  // Reset dismissed state when feedback message changes
+  useEffect(() => {
+    setDismissedFeedback(false);
+  }, [feedbackMessage]);
 
   // Styling based on validation/state
   let borderColor = "border-slate-300 dark:border-slate-600";
@@ -101,20 +107,35 @@ export const SentenceChunk: React.FC<SentenceChunkProps> = ({
       }}
       onDragLeave={handleDragLeaveChunk}
     >
-      {/* Tooltip for Feedback - MOVED TO BOTTOM */}
-      {feedbackMessage && (
-        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-48 p-2 bg-slate-800 dark:bg-slate-700 text-white text-xs rounded shadow-lg z-[200] text-center pointer-events-none animate-in fade-in slide-in-from-top-1">
-          {feedbackMessage}
+      {/* Tooltip for Feedback - POSITIONED BELOW HEADER WITH HIGH Z-INDEX */}
+      {feedbackMessage && !dismissedFeedback && (
+        <div className="absolute top-11 left-1/2 -translate-x-1/2 w-56 p-3 bg-slate-800 dark:bg-slate-700 text-white text-xs rounded shadow-2xl z-[9998] text-center animate-in fade-in slide-in-from-top-2 pointer-events-auto flex items-center justify-center gap-2">
+          <span className="flex-1">{feedbackMessage}</span>
+          <button 
+            onClick={() => setDismissedFeedback(true)}
+            className="flex-shrink-0 hover:bg-white/20 rounded p-0.5 transition-colors"
+            title="Verbergen"
+          >
+            ×
+          </button>
           {/* Arrow pointing up */}
-          <div className="absolute bottom-full left-1/2 -translate-x-1/2 border-4 border-transparent border-b-slate-800 dark:border-b-slate-700"></div>
+          <div className="absolute -top-1 left-1/2 -translate-x-1/2 border-4 border-transparent border-b-slate-800 dark:border-b-slate-700"></div>
         </div>
       )}
 
       {/* Main Role Header */}
-      <div className={`
-        h-9 border-b border-dashed border-slate-200 dark:border-slate-600 flex items-center justify-center text-xs rounded-t-lg relative z-10
-        ${assignedRole ? assignedRole.colorClass + ' font-bold' : 'text-slate-400 dark:text-slate-500 italic'}
-      `}>
+      <div 
+        className={`
+          h-9 border-b border-dashed border-slate-200 dark:border-slate-600 flex items-center justify-center text-xs rounded-t-lg relative z-10 cursor-pointer transition-opacity
+          ${assignedRole ? assignedRole.colorClass + ' font-bold hover:opacity-80' : 'text-slate-400 dark:text-slate-500 italic'}
+        `}
+        onClick={(e) => {
+          if (assignedRole && !validationState) {
+            e.stopPropagation();
+            onRemoveRole(chunkId);
+          }
+        }}
+      >
         {assignedRole ? (
           <div className="flex items-center gap-2 w-full justify-center px-2 relative group/header">
             <span className="relative z-10">{assignedRole.label}</span>

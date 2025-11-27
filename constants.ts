@@ -139,7 +139,7 @@ export const FEEDBACK_MATRIX: Record<string, Record<string, string>> = {
   },
   'mv': {
     'ond': "Dit is niet degene die de handeling uitvoert. Kun je er 'aan' of 'voor' voor denken?",
-    'lv': "Haal je de twee objecten door elkaar? Probeer er 'aan' of 'voor' voor te zetten. Als dat past, is het MV.",
+    'lv': "Haal je twee vragen door elkaar? Probeer er 'aan' of 'voor' voor te zetten. Als dat past, is het MV.",
     'vv': "Als je 'aan' of 'voor' kunt weglaten (of erbij denken), is het Meewerkend Voorwerp. Bij een VV zit het voorzetsel 'vast'."
   },
   'vv': {
@@ -169,7 +169,7 @@ export const FEEDBACK_MATRIX: Record<string, Record<string, string>> = {
 };
 
 export const HINTS = {
-  MISSING_PV: "Tip: Zoek eerst de persoonsvorm. Maak de zin vragend of verander de tijd.",
+  MISSING_PV: "Tip: Zoek eerst de persoonsvorm. Doe de tijds- of getalsproef.",
   MISSING_OW: "Tip: Zoek het onderwerp. Vraag: Wie of wat + persoonsvorm?",
   MISSING_WG: "Tip: Maak het gezegde compleet. Welke andere werkwoorden staan er in de zin?",
   MISSING_NG: "Tip: Dit is een zin met een koppelwerkwoord. Zoek het Naamwoordelijk Gezegde (wat wordt er gezegd over het onderwerp?).",
