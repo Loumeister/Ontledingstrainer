@@ -846,7 +846,7 @@ export const SENTENCES: Sentence[] = [
       { id: "s42t2", text: "vinden", role: "pv" },
       { id: "s42t3", text: "het", role: "lv" },
       { id: "s42t4", text: "soms", role: "bwb" },
-      { id: "s42t5", text: "lastig", role: "nwd" }, // User specified 'ng-deel'
+      { id: "s42t5", text: "lastig", role: "bwb" },
       { id: "s42t6", text: "om", role: "vv" },
       { id: "s42t7", text: "iedereen", role: "vv" },
       { id: "s42t8", text: "tegelijk", role: "vv", subRole: "bijv_bep" },
